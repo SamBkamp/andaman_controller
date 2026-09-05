@@ -88,7 +88,8 @@ class _MenuWidgetState extends State<MenuWidget> {
   SliverAppBar menu_bar(){
     return SliverAppBar(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-      title: Text('Your Devices'),
+      title: Text('Devices',
+        style: const TextStyle(fontWeight: FontWeight.bold),),
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         background: Center(
@@ -119,7 +120,8 @@ class _MenuWidgetState extends State<MenuWidget> {
           menu_bar(),
           SliverList.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text(widget.registry.device_by_index(index).name),
+              title: Text(widget.registry.device_by_index(index).name
+                style: const TextStyle(fontWeight: FontWeight.w600),),
               subtitle: Text(widget.registry.device_by_index(index).uuid),
               trailing: IconButton(
                 icon: Icon(Icons.delete),
