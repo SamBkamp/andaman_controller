@@ -16,19 +16,29 @@ class NewDevicePopup extends StatefulWidget {
 }
 
 class _NewDevicePopupState extends State<NewDevicePopup> {
-
+  bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
 
   Future<void> scan_devices() async {
+    setState(() {
+        scanning = true;
+    });
     final scanned_devices = await widget.ble.scan_devices();
-
     setState(() {
         devices = scanned_devices;
+        scanning = false;
     });
   }
   
   Widget newDeviceContent() {
+    if(scanning){
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    
+    
     return DropdownButton<DoserDevice>(
       hint: const Text("Select a device"),
       value: selectedDevice,
