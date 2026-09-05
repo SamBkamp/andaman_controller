@@ -5,14 +5,14 @@ class Ble_manager {
 
   const Ble_manager();
 
-  Future<int> scan_devices() async {
+  Future<List<DoserDevice>> scan_devices() async {
     final results = <DeviceIdentifier, ScanResult>{};
+    var devices = <DoserDevice>[];
 
     print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
     final subscription = FlutterBluePlus.onScanResults.listen(
       (scan_results) {
-        print("Got ${scan_results.length} scan results");
 
         for (final result in scan_results) {
           results[result.device.remoteId] = result;
@@ -34,14 +34,20 @@ class Ble_manager {
     await subscription.cancel();
 
     for (final entry in results.values) {
-      print("UUID: ${entry.device.remoteId}");
-      print("Name: ${entry.advertisementData.advName}");
-    }
+      if(entry.advertisementData.advName.length > 1){
+        print("UUID: ${entry.device.remoteId}");      
+        print("Name: ${entry.advertisementData.advName}");
+        devices.add(DoserDevice(
+            uuid: entry.device.remoteId.toString(),
+            name: entry.advertisementData.advName,
+          ),
+        );
+      }
 
-    print("HEEEEELP");
+    }
     print(results.length);
 
-    return 0;
+    return devices;
   }
 
 }

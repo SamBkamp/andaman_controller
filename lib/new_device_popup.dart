@@ -17,19 +17,18 @@ class NewDevicePopup extends StatefulWidget {
 
 class _NewDevicePopupState extends State<NewDevicePopup> {
 
-  final devices = [
-    DoserDevice(name: "Doser 1", uuid: "1234123"),
-    DoserDevice(name: "Doser 2", uuid: "1234123"),
-    DoserDevice(name: "Doser 3", uuid: "1234123"),
-  ];
+  List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
 
-  void scan_devices() async {
-    await widget.ble.scan_devices();
+  Future<void> scan_devices() async {
+    final scanned_devices = await widget.ble.scan_devices();
+
+    setState(() {
+        devices = scanned_devices;
+    });
   }
   
   Widget newDeviceContent() {
-    scan_devices();
     return DropdownButton<DoserDevice>(
       hint: const Text("Select a device"),
       value: selectedDevice,
@@ -73,5 +72,11 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    scan_devices();
   }
 }
