@@ -30,15 +30,18 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
         scanning = false;
     });
   }
-  
+
   Widget newDeviceContent() {
     if(scanning){
-      return const Center(
-        child: CircularProgressIndicator(),
+      return const SizedBox(
+        height: 48,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
-    
-    
+
+
     return DropdownButton<DoserDevice>(
       hint: const Text("Select a device"),
       value: selectedDevice,
