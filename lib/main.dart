@@ -120,7 +120,7 @@ class _MenuWidgetState extends State<MenuWidget> {
           menu_bar(),
           SliverList.builder(
             itemBuilder: (context, index) => ListTile(
-              title: Text(widget.registry.device_by_index(index).name
+              title: Text(widget.registry.device_by_index(index).name,
                 style: const TextStyle(fontWeight: FontWeight.w600),),
               subtitle: Text(widget.registry.device_by_index(index).uuid),
               trailing: IconButton(
