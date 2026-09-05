@@ -33,9 +33,9 @@ class Ble_manager {
 
     await subscription.cancel();
 
-    for (final entry in results.entries) {
-      print(entry.key);
-      print(entry.value);
+    for (final entry in results.values) {
+      print("UUID: ${entry.device.remoteId}");
+      print("Name: ${entry.advertisementData.advName}");
     }
 
     print("HEEEEELP");
