@@ -2,13 +2,12 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'device.dart';
 
 class Ble_manager {
+  final results = <DeviceIdentifier, ScanResult>{};
+  var devices = <DoserDevice>[];
 
-  const Ble_manager();
+  Ble_manager();
 
   Future<List<DoserDevice>> scan_devices() async {
-    final results = <DeviceIdentifier, ScanResult>{};
-    var devices = <DoserDevice>[];
-
     print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
     final subscription = FlutterBluePlus.onScanResults.listen(
@@ -35,7 +34,7 @@ class Ble_manager {
 
     for (final entry in results.values) {
       if(entry.advertisementData.advName.length > 1){
-        print("UUID: ${entry.device.remoteId}");      
+        print("UUID: ${entry.device.remoteId}");
         print("Name: ${entry.advertisementData.advName}");
         devices.add(DoserDevice(
             uuid: entry.device.remoteId.toString(),
@@ -49,5 +48,28 @@ class Ble_manager {
 
     return devices;
   }
+
+
+  Future<bool> connect_to_device(DoserDevice ddev) async{
+    print("CONNECTING NOW");
+    final uuid = DeviceIdentifier(ddev.uuid);
+    final scan_result = results[uuid];
+
+    if (scan_result == null) {
+      print("Connection failed: scan_result was NULL");
+      return false;
+    }
+
+    try {
+      await scan_result.device.connect();
+    } catch (e) {
+      print("Connection failed: $e");
+      return false;
+    }
+
+    print("no porblemo");
+    return true;
+  }
+
 
 }

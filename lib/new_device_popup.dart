@@ -4,11 +4,12 @@ import 'ble.dart';
 
 class NewDevicePopup extends StatefulWidget {
   final DeviceRegistry registry;
-  final Ble_manager ble = const Ble_manager();
+  final Ble_manager ble;
 
-  const NewDevicePopup({
+  NewDevicePopup({
       super.key,
       required this.registry,
+      required this.ble,
   });
 
   @override
@@ -19,6 +20,7 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
+  DateTime? last_scan;
 
   Future<void> scan_devices() async {
     setState(() {
@@ -39,6 +41,14 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
           child: CircularProgressIndicator(),
         ),
       );
+    }else{ //REMOVE THIS NONSENSE BEFORE SHIPPING
+      if(devices.length == 0){
+        devices.add(DoserDevice(
+            uuid: "123-456-789",
+            name: "DUMMY DEVICE",
+          ),
+        );
+      }
     }
 
 
@@ -90,6 +100,9 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   @override
   void initState() {
     super.initState();
-    scan_devices();
+    if(last_scan == null || DateTime.now().difference(last_scan!) > const Duration(seconds: 10)){
+      scan_devices();
+    }
+    //scanning is false by def
   }
 }

@@ -1,22 +1,29 @@
 import 'device.dart';
 import 'new_device_popup.dart';
 import 'package:flutter/material.dart';
+import 'doser_page.dart';
+import 'ble.dart';
 
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   final registry = DeviceRegistry();
   await registry.load();
-  runApp(MainApp(registry: registry));
+  final Ble_manager ble = Ble_manager();
+
+  runApp(MainApp(registry: registry, ble: ble));
 }
 
 //root widget
 class MainApp extends StatelessWidget {
   final DeviceRegistry registry;
+  final Ble_manager ble;
 
   const MainApp({
     super.key,
     required this.registry,
+    required this.ble,
   });
 
   @override
@@ -29,7 +36,7 @@ class MainApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: MenuWidget(registry: registry),
+      home: MenuWidget(registry: registry, ble: ble),
     );
   }
 }
@@ -59,10 +66,12 @@ class generic_button_creator extends StatelessWidget {
 
 class MenuWidget extends StatefulWidget {
   final DeviceRegistry registry;
+  final Ble_manager ble;
 
   const MenuWidget({
       super.key,
       required this.registry,
+      required this.ble,
   });
 
   @override
@@ -80,6 +89,7 @@ class _MenuWidgetState extends State<MenuWidget> {
       builder: (context) {
         return NewDevicePopup(
           registry: widget.registry,
+          ble: widget.ble,
         );
       },
     );
@@ -108,10 +118,39 @@ class _MenuWidgetState extends State<MenuWidget> {
         ),//center end
       ),//flexible space bar end
       expandedHeight: 150,
-    );    
+    );
   }
-  
-  
+
+
+  void _device_tap(int index){
+    final device = widget.registry.device_by_index(index);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DoserPage(
+          device: device,
+          blemanager: widget.ble
+        ),
+      ),
+    );
+  }
+
+  ListTile _device_list_item(var context, var index){
+    return ListTile(
+      title: Text(widget.registry.device_by_index(index).name,
+        style: const TextStyle(fontWeight: FontWeight.w600),),
+      subtitle: Text(widget.registry.device_by_index(index).uuid),
+      trailing: IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () {
+          widget.registry.delete(widget.registry.device_by_index(index));
+        }
+      ),
+      onTap:() => _device_tap(index),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,17 +158,7 @@ class _MenuWidgetState extends State<MenuWidget> {
         slivers: [
           menu_bar(),
           SliverList.builder(
-            itemBuilder: (context, index) => ListTile(
-              title: Text(widget.registry.device_by_index(index).name,
-                style: const TextStyle(fontWeight: FontWeight.w600),),
-              subtitle: Text(widget.registry.device_by_index(index).uuid),
-              trailing: IconButton(
-                icon: Icon(Icons.delete),
-                onPressed: () {
-                  widget.registry.delete(widget.registry.device_by_index(index));
-                }              
-              ),
-            ),
+            itemBuilder: (context, index) => _device_list_item(context, index),
             itemCount: widget.registry.total_devices(),
           ),
         ],
