@@ -10,6 +10,14 @@ class Ble_manager {
   Future<List<DoserDevice>> scan_devices() async {
     print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
+    final state = await FlutterBluePlus.adapterState.firstWhere(
+      (state) =>
+      state == BluetoothAdapterState.on ||
+      state == BluetoothAdapterState.off,
+    );
+
+    if(state == BluetoothAdapterState.off) throw Exception("Bluetooth turned off");
+
     final subscription = FlutterBluePlus.onScanResults.listen(
       (scan_results) {
 
@@ -23,7 +31,7 @@ class Ble_manager {
     );
 
     await FlutterBluePlus.startScan(
-      timeout: const Duration(seconds: 5),
+      timeout: const Duration(seconds: 3),
     );
 
     await FlutterBluePlus.isScanning
