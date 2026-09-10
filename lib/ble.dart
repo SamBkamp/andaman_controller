@@ -74,7 +74,7 @@ class Ble_manager {
       return false;
     }
 
-    final services = await device.discoverServices();
+    final services = await scan_result.device.discoverServices();
 
     for (final service in services) {
       print("Service: ${service.uuid}");
