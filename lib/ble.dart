@@ -17,6 +17,7 @@ class Ble_manager {
   Ble_manager();
 
   Future<List<DoserDevice>> scan_devices() async {
+    devices.clear();
     print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
     final state = await FlutterBluePlus.adapterState.firstWhere(
