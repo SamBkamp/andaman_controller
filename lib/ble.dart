@@ -59,7 +59,6 @@ class Ble_manager {
 
 
   Future<bool> connect_to_device(DoserDevice ddev) async{
-    print("CONNECTING NOW");
     final uuid = DeviceIdentifier(ddev.uuid);
     final scan_result = results[uuid];
 
@@ -75,7 +74,19 @@ class Ble_manager {
       return false;
     }
 
-    print("no porblemo");
+    final services = await device.discoverServices();
+
+    for (final service in services) {
+      print("Service: ${service.uuid}");
+
+      for (final characteristic in service.characteristics) {
+        print("  Characteristic: ${characteristic.uuid}");
+        print("  Read: ${characteristic.properties.read}");
+        print("  Write: ${characteristic.properties.write}");
+        print("  Notify: ${characteristic.properties.notify}");
+      }
+    }
+
     return true;
   }
 
