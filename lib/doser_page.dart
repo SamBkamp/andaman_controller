@@ -128,11 +128,14 @@ class _DoserPageState extends State<DoserPage> {
 
   @override
   Widget build(BuildContext context) {
+    final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
       ),
-      body: Column(
+      body: ListView(
+        keyboardDismissBehavior:
+          ScrollViewKeyboardDismissBehavior.onDrag,
         children: [
           device_hero(context),
           const SizedBox(height: 20), //padding
@@ -146,7 +149,12 @@ class _DoserPageState extends State<DoserPage> {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: keyboard_visible
+      ? FloatingActionButton(
+        onPressed: commit_changes,
+        child: const Icon(Icons.save),
+      )
+      : FloatingActionButton.extended(
         onPressed: commit_changes,
         label: widget.theme.subtitle_text("Save changes"),
         icon: const Icon(Icons.save),
