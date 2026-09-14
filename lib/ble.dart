@@ -2,14 +2,14 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'device.dart';
 
 class Ble_manager {
-  static const doser_service_uuid          = "8b7668b1-2fa9-40ac-5208-1aa51d1ee896";
-  static const dosing_characteristic_uuid  = "8b7668b1-2fa9-5ed0-5208-1aa51d1ee896";
-  static const status_characteristic_uuid  = "8b7668b1-2fa9-8757-5208-1aa51d1ee896";
-  static const sched_characteristic_uuid   = "8b7668b1-2fa9-ed5c-5208-1aa51d1ee896";
-  static const device_info_uuid            = "8b7668b1-2fa9-f013-5208-1aa51d1ee896";
-  static const calibration_info_uuid       = "8b7668b1-2fa9-1bca-5208-1aa51d1ee896";
-  static const write_calibration_uuid      = "8b7668b1-2fa9-00ca-5208-1aa51d1ee896";
-  static const write_direction_uuid        = "8b7668b1-2fa9-4ed1-5208-1aa51d1ee896";
+
+  static const doser_service_uuid           = "8b7668b1-2fa9-40ac-5208-1aa51d1ee896";
+  static const dosing_characteristic_uuid   = "8b7668b1-2fa9-5ed0-5208-1aa51d1ee896";
+  static const schedule_characteristic_uuid = "8b7668b1-2fa9-ed5c-5208-1aa51d1ee896";
+  static const device_info_uuid             = "8b7668b1-2fa9-f013-5208-1aa51d1ee896";
+  static const calibration_uuid             = "8b7668b1-2fa9-1bca-5208-1aa51d1ee896";
+  static const write_direction_uuid         = "8b7668b1-2fa9-4ed1-5208-1aa51d1ee896";
+  static const devname_uuid                 = "8b7668b1-2fa9-9e4a-5208-1aa51d1ee896";
 
   final results = <DeviceIdentifier, ScanResult>{};
   var devices = <DoserDevice>[];
@@ -94,16 +94,16 @@ class Ble_manager {
           case dosing_characteristic_uuid:
           print("dosing characteristic:");
 
-          case status_characteristic_uuid:
-          print("status characteristic:");
-
-          case status_characteristic_uuid:
-          print("status characteristic:");
-
-          case sched_characteristic_uuid:
+          case schedule_characteristic_uuid:
           print("schedule characteristic:");
 
           case device_info_uuid:
+          print("device info characteristic:");
+
+          case calibration_uuid:
+          print("calibration characteristic:");
+
+          case write_direction_uuid:
           print("dev info characteristic:");
 
           default:
