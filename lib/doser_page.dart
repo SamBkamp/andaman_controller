@@ -24,6 +24,7 @@ class _DoserPageState extends State<DoserPage> {
   bool TEST_FLAG = true;
   final dose_controller = TextEditingController();
   final seconds_controller = TextEditingController();
+  final insta_dose_amount_controller = TextEditingController();
 
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _DoserPageState extends State<DoserPage> {
   void dispose() {
     dose_controller.dispose();
     seconds_controller.dispose();
+    insta_dose_amount_controller.dispose();
     super.dispose();
   }
 
@@ -65,6 +67,29 @@ class _DoserPageState extends State<DoserPage> {
     });
   }
 
+
+  Widget manual_dosing() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 30,
+          child: TextField(
+            controller: insta_dose_amount_controller,
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.numberWithOptions(decimal: true,),
+          ),
+        ),
+        const Text("ml"),
+        SizedBox(width: 20),
+        FilledButton(
+          onPressed: (){},
+          child: const Text("Dose"),
+        ),
+      ]
+    );
+
+  }
 
   Widget dose_sched_selector() {
     return Row(
@@ -113,8 +138,10 @@ class _DoserPageState extends State<DoserPage> {
           const SizedBox(height: 20), //padding
           // Configuration UI will eventually go here
           if((connected != null && connected!) || TEST_FLAG) ...[
-            setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value))),
-            setting_row("Schedule", dose_sched_selector())
+            setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value)), 3, 7),
+            setting_row("Schedule", dose_sched_selector(), 3, 7),
+            setting_row("Manual Dosing", manual_dosing(), 5, 5),
+
           ]
         ],
       ),
@@ -129,7 +156,7 @@ class _DoserPageState extends State<DoserPage> {
 
   Expanded info_col(){
     return Expanded(
-      flex: 7,
+      flex: 6,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -145,9 +172,16 @@ class _DoserPageState extends State<DoserPage> {
 
   Expanded icon_col(){
     return Expanded(
-      flex: 3,
+      flex: 4,
       child: Center(
-        child: Icon(Icons.local_drink, size: 100,),
+        child: SizedBox(
+          width: 90,
+          height: 90,
+          child: Image.asset(
+            'assets/doser_clipaart.png',
+            fit: BoxFit.contain,
+          ),
+        ),
       ),
     );
   }
@@ -156,7 +190,10 @@ class _DoserPageState extends State<DoserPage> {
   Widget device_hero(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(
+        vertical: 30,
+        horizontal: 5,
+      ),
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Row(
         children: [
@@ -168,14 +205,14 @@ class _DoserPageState extends State<DoserPage> {
   }
 
 
-  Widget setting_row(String name, Widget setting){
+  Widget setting_row(String name, Widget setting, int width1, int width2){
     return Padding(
-      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 8,),
+      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 14,),
       child: Row(
         children: [
-          Expanded( flex: 3, child: widget.theme.subtitle_text(name),),
+          Expanded( flex: width1, child: widget.theme.subtitle_text(name),),
           Expanded(
-            flex: 7,
+            flex: width2,
             child: Align( alignment: Alignment.centerRight, child: setting,),
           ),
         ],
