@@ -137,14 +137,20 @@ class _MenuWidgetState extends State<MenuWidget> {
   }
 
   ListTile _device_list_item(var context, var index){
+    final device = widget.registry.device_by_index(index); 
+    
     return ListTile(
-      title: Text(widget.registry.device_by_index(index).name,
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.asset('assets/doser_clipaart.png'),
+      ),
+      title: Text(device.name,
         style: const TextStyle(fontWeight: FontWeight.w600),),
-      subtitle: Text(widget.registry.device_by_index(index).uuid),
+      subtitle: Text(device.uuid),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {
-          widget.registry.delete(widget.registry.device_by_index(index));
+          widget.registry.delete(device);
         }
       ),
       onTap:() => _device_tap(index),

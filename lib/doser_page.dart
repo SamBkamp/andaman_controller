@@ -18,13 +18,20 @@ class DoserPage extends StatefulWidget {
   State<DoserPage> createState() => _DoserPageState();
 }
 
+enum ScheduleType {
+  periodic,
+  daily,
+}
+
 class _DoserPageState extends State<DoserPage> {
+  ScheduleType _schedule_type = ScheduleType.periodic;
   bool? connected;
   bool direction = false;
   bool TEST_FLAG = true;
   final dose_controller = TextEditingController();
   final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
+  final actual_calibration_dose_controller = TextEditingController();
 
   @override
   void initState() {
@@ -37,6 +44,7 @@ class _DoserPageState extends State<DoserPage> {
     dose_controller.dispose();
     seconds_controller.dispose();
     insta_dose_amount_controller.dispose();
+    actual_calibration_dose_controller.dispose();
     super.dispose();
   }
 
@@ -91,6 +99,42 @@ class _DoserPageState extends State<DoserPage> {
 
   }
 
+  Widget calibration_dose() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children:[
+        FilledButton(
+          onPressed: (){},
+          child: const Text("10 ml calibration dose"),
+        ),
+      ]
+    );
+  }
+
+  Widget actual_calibration_amount() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children:[
+        Text("measured:"),
+        SizedBox(width: 10),
+        SizedBox(
+          width: 50,
+          child: TextField(
+            controller: actual_calibration_dose_controller,
+            textAlign: TextAlign.center,
+            keyboardType: TextInputType.numberWithOptions(decimal: true,),
+          ),
+        ),
+        Text("ml"),
+        SizedBox(width: 20),
+        FilledButton(
+          onPressed: (){},
+          child: const Text("Update Calibration"),
+        ),
+      ]
+    );
+  }
+  
   Widget dose_sched_selector() {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -126,6 +170,23 @@ class _DoserPageState extends State<DoserPage> {
     // Whatever you want to do after the device confirms it.
   }
 
+  Widget schedule_type_drop() {
+    return DropdownButton<ScheduleType>(
+      value: _schedule_type,
+      underline: const SizedBox(),
+      items: const [ DropdownMenuItem(
+          value: ScheduleType.periodic,
+          child: Text("Periodic"),
+        ),
+        DropdownMenuItem(
+          value: ScheduleType.daily,
+          child: Text("Evenly throughout day"),
+        ),
+      ],
+      onChanged: (value) { if (value != null) { setState(() { _schedule_type = value; }); } },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -141,9 +202,14 @@ class _DoserPageState extends State<DoserPage> {
           const SizedBox(height: 20), //padding
           // Configuration UI will eventually go here
           if((connected != null && connected!) || TEST_FLAG) ...[
+            section_header("Settings"),
             setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value)), 3, 7),
-            setting_row("Schedule", dose_sched_selector(), 3, 7),
+            setting_row("Schedule", schedule_type_drop(), 3, 7, bottom_padding: 0),
+            setting_row(null, dose_sched_selector(), 3, 7, top_padding: 0),
+            section_header("Tools"),
             setting_row("Manual Dosing", manual_dosing(), 5, 5),
+            setting_row("Calibration", calibration_dose(), 5, 5, bottom_padding: 0),
+            setting_row(null, actual_calibration_amount(), 5, 5, top_padding: 0),
 
           ]
         ],
@@ -212,20 +278,66 @@ class _DoserPageState extends State<DoserPage> {
     );
   }
 
-
-  Widget setting_row(String name, Widget setting, int width1, int width2){
+  Widget section_header(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 14,),
+      padding: EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: 20,
+        bottom: 0,
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 25,
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+  
+  Widget setting_row(String? name, Widget? setting, int width1, int width2, {double top_padding = 14, double bottom_padding = 14}){
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: top_padding,
+        bottom: bottom_padding,
+      ),
       child: Row(
         children: [
-          Expanded( flex: width1, child: widget.theme.subtitle_text(name),),
+          if (name != null)
+          Expanded(
+            flex: width1,
+            child: widget.theme.subtitle_text(name),
+          ),
+          if (setting != null)
           Expanded(
             flex: width2,
-            child: Align( alignment: Alignment.centerRight, child: setting,),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: setting,
+            ),
           ),
         ],
       ),
     );
   }
 
+//  Widget setting_row(String name, Widget setting, int width1, int width2){
+//    return Padding(
+//      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 14,),
+//      child: Row(
+//        children: [
+//          Expanded( flex: width1, child: widget.theme.subtitle_text(name),),
+//          Expanded(
+//            flex: width2,
+//            child: Align( alignment: Alignment.centerRight, child: setting,),
+//          ),
+//        ],
+//      ),
+//    );
+//  }
+//
 }
