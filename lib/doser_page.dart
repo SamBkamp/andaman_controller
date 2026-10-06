@@ -208,7 +208,7 @@ class _DoserPageState extends State<DoserPage> {
             setting_row(null, dose_sched_selector(), 3, 7, top_padding: 0),
             section_header("Tools"),
             setting_row("Manual Dosing", manual_dosing(), 5, 5),
-            setting_row("Calibration", calibration_dose(), 5, 5, bottom_padding: 0),
+            setting_row("Calibration", calibration_dose(), 4, 6, bottom_padding: 0),
             setting_row(null, actual_calibration_amount(), 5, 5, top_padding: 0),
 
           ]
