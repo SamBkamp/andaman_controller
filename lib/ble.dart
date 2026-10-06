@@ -22,6 +22,7 @@ class Ble_manager {
     devices.clear();
     print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
+    //weird ass hack where first query returns "unknown"
     final state = await FlutterBluePlus.adapterState.firstWhere(
       (state) =>
       state == BluetoothAdapterState.on ||
@@ -71,9 +72,17 @@ class Ble_manager {
 
 
   Future<bool> connect_to_device(DoserDevice ddev) async{
+
     final uuid = DeviceIdentifier(ddev.uuid);
     final scan_result = results[uuid];
 
+    if (scan_result == null) {
+      print("Connection failed: scan_result was NULL");
+      await scan_devices();
+      //return false;
+    }
+
+    //try a second time just in case there was no init first time around
     if (scan_result == null) {
       print("Connection failed: scan_result was NULL");
       return false;
@@ -152,6 +161,28 @@ class Ble_manager {
     return true;
   }
 
+  Future<bool> getDirection(DoserDevice ddev) async{
+    final characteristic = ddev.characteristics[DoserEndpoint.direction.index];
+    if (characteristic == null) {
+      return false;
+    }
 
+    final val = await characteristic.read();
+
+    return String.fromCharCodes(val) == "CW";
+  }
+
+  Future<bool> setDirection(DoserDevice ddev, bool direction) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.direction.index];
+    if (characteristic == null) {
+      return false;
+    }
+
+    await characteristic.write([
+        direction ? 0x00 : 0x01,
+    ]);
+
+    return true;
+  }
 
 }

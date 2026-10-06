@@ -48,11 +48,21 @@ class _DoserPageState extends State<DoserPage> {
     super.dispose();
   }
 
+
   Future<void> connect_device() async {
     final result = await widget.blemanager.connect_to_device(widget.device);
 
     setState(() {
         connected = result;
+    });
+
+    if (!mounted || !result) return;
+
+    final newDir = await widget.blemanager.getDirection(widget.device);
+
+
+    setState(() {
+        direction = newDir;
     });
   }
 
@@ -73,6 +83,7 @@ class _DoserPageState extends State<DoserPage> {
     setState(() {
         direction = dir;
     });
+    widget.blemanager.setDirection(widget.device, dir);
   }
 
 
@@ -137,7 +148,7 @@ class _DoserPageState extends State<DoserPage> {
       ]
     );
   }
-  
+
   Widget dose_sched_selector() {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -299,7 +310,7 @@ class _DoserPageState extends State<DoserPage> {
       ),
     );
   }
-  
+
   Widget setting_row(String? name, Widget? setting, int width1, int width2, {double top_padding = 14, double bottom_padding = 14}){
     return Padding(
       padding: EdgeInsets.only(
