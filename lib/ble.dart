@@ -94,14 +94,17 @@ class Ble_manager {
       for (final characteristic in service.characteristics) {
         switch(characteristic.uuid.str){
           case dosing_characteristic_uuid:
+          ddev.characteristics[DoserEndpoint.dose.index] = characteristic;
           print("dosing characteristic:");
           break;
 
           case schedule_characteristic_uuid:
+          ddev.characteristics[DoserEndpoint.schedule.index] = characteristic;
           print("schedule characteristic:");
           break;
 
           case device_info_uuid:
+          ddev.characteristics[DoserEndpoint.deviceInfo.index] = characteristic;
           print("device info characteristic:");
           final value = await characteristic.read();
           print("Device info: $value");
@@ -112,10 +115,12 @@ class Ble_manager {
           break;
 
           case write_direction_uuid:
+          ddev.characteristics[DoserEndpoint.direction.index] = characteristic;
           print("dev info characteristic:");
           break;
 
           case auto_cal_uuid:
+          ddev.characteristics[DoserEndpoint.autocal.index] = characteristic;
           print("autocal characteristic:");
           break;
 
@@ -129,6 +134,25 @@ class Ble_manager {
 
     return true;
   }
+
+  Future<bool> manual_dose(DoserDevice ddev, String mls) async{
+
+    print("manually dosing!");
+
+    final characteristic = ddev.characteristics[DoserEndpoint.dose.index];
+
+
+    if (characteristic == null) {
+      return false;
+    }
+
+    await characteristic.write(
+      mls.codeUnits,
+    );
+
+    return true;
+  }
+
 
 
 }

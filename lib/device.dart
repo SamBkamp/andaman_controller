@@ -2,10 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer';
 import 'dart:convert';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
+enum DoserEndpoint {
+  deviceInfo,
+  dose,
+  schedule,
+  autocal,
+  direction
+}
+
 
 class DoserDevice {
   final String name;
   final String uuid;
+  List<BluetoothCharacteristic?> characteristics = List.filled(DoserEndpoint.values.length, null);
 
   DoserDevice({
     required this.name,

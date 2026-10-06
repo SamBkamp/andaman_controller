@@ -91,7 +91,9 @@ class _DoserPageState extends State<DoserPage> {
         const Text("ml"),
         SizedBox(width: 20),
         FilledButton(
-          onPressed: (){},
+          onPressed: (){
+            widget.blemanager.manual_dose(widget.device, dose_controller.text);
+          },
           child: const Text("Dose"),
         ),
       ]
