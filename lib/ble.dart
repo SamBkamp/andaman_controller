@@ -10,6 +10,8 @@ class Ble_manager {
   static const calibration_uuid             = "8b7668b1-2fa9-1bca-5208-1aa51d1ee896";
   static const write_direction_uuid         = "8b7668b1-2fa9-4ed1-5208-1aa51d1ee896";
   static const devname_uuid                 = "8b7668b1-2fa9-9e4a-5208-1aa51d1ee896";
+  static const auto_cal_uuid                = "8b7668b1-2fa9-5110-5208-1aa51d1ee896";
+
 
   final results = <DeviceIdentifier, ScanResult>{};
   var devices = <DoserDevice>[];
@@ -105,6 +107,9 @@ class Ble_manager {
 
           case write_direction_uuid:
           print("dev info characteristic:");
+
+          case auto_cal_uuid:
+          print("autocal characteristic:");
 
           default:
           print("unknown characteristic:");
