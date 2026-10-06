@@ -137,7 +137,8 @@ class Ble_manager {
 
   Future<bool> manual_dose(DoserDevice ddev, String mls) async{
 
-    print("manually dosing!");
+    print("manually dosing ${mls} mls");
+    print("in code units: ${mls.codeUnits}");
 
     final characteristic = ddev.characteristics[DoserEndpoint.dose.index];
 
@@ -146,9 +147,7 @@ class Ble_manager {
       return false;
     }
 
-    await characteristic.write(
-      mls.codeUnits,
-    );
+    await characteristic.write(mls.codeUnits);
 
     return true;
   }
