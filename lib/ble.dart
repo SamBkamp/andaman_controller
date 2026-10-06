@@ -95,26 +95,33 @@ class Ble_manager {
         switch(characteristic.uuid.str){
           case dosing_characteristic_uuid:
           print("dosing characteristic:");
+          break;
 
           case schedule_characteristic_uuid:
           print("schedule characteristic:");
+          break;
 
           case device_info_uuid:
           print("device info characteristic:");
           final value = await characteristic.read();
           print("Device info: $value");
+          break;
 
           case calibration_uuid:
           print("calibration characteristic:");
+          break;
 
           case write_direction_uuid:
           print("dev info characteristic:");
+          break;
 
           case auto_cal_uuid:
           print("autocal characteristic:");
+          break;
 
           default:
           print("unknown characteristic:");
+          break;
         }
         print("    ${characteristic.uuid}");
       }
