@@ -101,6 +101,8 @@ class Ble_manager {
 
           case device_info_uuid:
           print("device info characteristic:");
+          final value = await characteristic.read();
+          print("Device info: $value");
 
           case calibration_uuid:
           print("calibration characteristic:");
