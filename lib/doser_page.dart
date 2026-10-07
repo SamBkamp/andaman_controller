@@ -117,7 +117,7 @@ class _DoserPageState extends State<DoserPage> {
       mainAxisSize: MainAxisSize.min,
       children:[
         FilledButton(
-          onPressed: (){},
+          onPressed: (){widget.blemanager.manual_dose(widget.device, "10");},
           child: const Text("10 ml calibration dose"),
         ),
       ]
@@ -141,7 +141,7 @@ class _DoserPageState extends State<DoserPage> {
         Text("ml"),
         SizedBox(width: 20),
         FilledButton(
-          onPressed: (){},
+          onPressed: (){widget.blemanager.setAutocal(widget.device, actual_calibration_dose_controller.text);},
           child: const Text("Update Calibration"),
         ),
       ]

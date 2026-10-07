@@ -249,4 +249,17 @@ class Ble_manager {
 
     return true;
   }
+
+  Future<bool> setAutocal(DoserDevice ddev, String mls) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.autocal.index];
+
+    if (characteristic == null) {
+      return false;
+    }
+
+    await characteristic.write(mls.codeUnits);
+
+    return true;
+
+  }
 }
