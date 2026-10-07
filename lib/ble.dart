@@ -1,5 +1,6 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'device.dart';
+import 'schedule.dart';
 
 class Ble_manager {
 
@@ -197,4 +198,16 @@ class Ble_manager {
     return true;
   }
 
+  Future<Schedule> getSchedule(DoserDevice ddev) async {
+    Schedule retval = Schedule(ScheduleType.periodic, "2.5");
+    final characteristic = ddev.characteristics[DoserEndpoint.schedule.index];
+    if (characteristic == null) {
+      return retval;
+    }
+
+    final val = await characteristic.read();
+    String valString = String.fromCharCodes(val);
+    print(valString);
+    return retval;
+  }
 }

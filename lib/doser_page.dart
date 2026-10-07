@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'device.dart';
 import 'ble.dart';
 import 'theme_data.dart';
+import 'schedule.dart';
 
 class DoserPage extends StatefulWidget {
   final DoserDevice device;
@@ -18,10 +19,6 @@ class DoserPage extends StatefulWidget {
   State<DoserPage> createState() => _DoserPageState();
 }
 
-enum ScheduleType {
-  periodic,
-  daily,
-}
 
 class _DoserPageState extends State<DoserPage> {
   ScheduleType _schedule_type = ScheduleType.periodic;
