@@ -208,6 +208,9 @@ class Ble_manager {
     final val = await characteristic.read();
     String valString = String.fromCharCodes(val);
     print(valString);
+    List<String> parts = valString.split(",");
+    retval.ml = parts[0];
+    retval.period = parts[1];
     return retval;
   }
 }

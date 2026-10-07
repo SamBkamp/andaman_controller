@@ -22,6 +22,7 @@ class DoserPage extends StatefulWidget {
 
 class _DoserPageState extends State<DoserPage> {
   ScheduleType _schedule_type = ScheduleType.periodic;
+  Schedule? dose_sched;
   bool? connected;
   bool direction = false;
   bool TEST_FLAG = false;
@@ -51,19 +52,17 @@ class _DoserPageState extends State<DoserPage> {
   Future<void> connect_device() async {
     final result = await widget.blemanager.connect_to_device(widget.device);
 
-
-
     if (!mounted || !result) return;
 
     final newDir = await widget.blemanager.getDirection(widget.device);
-    await widget.blemanager.getSchedule(widget.device);
-
-    setState(() {
-        direction = newDir;
-    });
+    Schedule sched = await widget.blemanager.getSchedule(widget.device);
 
     setState(() {
         connected = result;
+        direction = newDir;
+        dose_sched = sched;
+        dose_controller.text = sched.ml;
+        seconds_controller.text = sched.period;
     });
   }
 
@@ -155,7 +154,7 @@ class _DoserPageState extends State<DoserPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: 30,
+          width: 60,
           child: TextField(
             controller: dose_controller,
             textAlign: TextAlign.center,
@@ -222,7 +221,7 @@ class _DoserPageState extends State<DoserPage> {
             section_header("Settings"),
             setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value)), 3, 7),
             setting_row("Schedule", schedule_type_drop(), 3, 7, bottom_padding: 0),
-            setting_row(null, dose_sched_selector(), 3, 7, top_padding: 0),
+            setting_row(null, dose_sched_selector(), 1, 9, top_padding: 0),
             section_header("Tools"),
             setting_row("Manual Dosing", manual_dosing(), 5, 5),
             setting_row("Calibration", calibration_dose(), 4, 6, bottom_padding: 0),
