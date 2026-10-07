@@ -101,7 +101,6 @@ class _DoserPageState extends State<DoserPage> {
         SizedBox(width: 50),
         FilledButton(
           onPressed: (){
-            print(insta_dose_amount_controller.text);
             widget.blemanager.manual_dose(widget.device, insta_dose_amount_controller.text);
           },
           child: const Text("Dose"),
@@ -195,6 +194,14 @@ class _DoserPageState extends State<DoserPage> {
   }
 
   Future<void> commit_changes() async {
+    if(dose_sched == null) return;
+
+    dose_sched!.ml = dose_controller.text;
+    if(dose_sched!.type == ScheduleType.periodic){
+      dose_sched!.period = seconds_controller.text;
+    }
+
+    await widget.blemanager.setSchedule(widget.device, dose_sched!);
     //await widget.ble.commit_changes(widget.device);
 
     // Whatever you want to do after the device confirms it.

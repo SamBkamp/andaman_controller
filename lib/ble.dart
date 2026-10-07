@@ -229,4 +229,24 @@ class Ble_manager {
 
     return retval;
   }
+
+  Future<bool> setSchedule(DoserDevice ddev, Schedule sched) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.schedule.index];
+    String sendVal = "";
+    if (characteristic == null) {
+      return false;
+    }
+    if(sched.type == ScheduleType.continuous){
+      String mls = sched.ml;
+      sendVal = "c$mls";
+    }else{
+      String mls = sched.ml;
+      String period = sched.period;
+      sendVal = "$mls,$period";
+    }
+
+    await characteristic.write(sendVal.codeUnits);
+
+    return true;
+  }
 }
