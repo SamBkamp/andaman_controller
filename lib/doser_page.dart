@@ -208,13 +208,7 @@ class _DoserPageState extends State<DoserPage> {
   Widget build(BuildContext context) {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
 
-    if(connected == null){
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -226,7 +220,6 @@ class _DoserPageState extends State<DoserPage> {
         children: [
           device_hero(context),
           const SizedBox(height: 20), //padding
-          // Configuration UI will eventually go here
           if((connected != null && connected!) || TEST_FLAG) ...[
             section_header("Settings"),
             setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value)), 3, 7),
@@ -237,6 +230,11 @@ class _DoserPageState extends State<DoserPage> {
             setting_row("Calibration", calibration_dose(), 4, 6, bottom_padding: 0),
             setting_row(null, actual_calibration_amount(), 5, 5, top_padding: 0),
 
+          ]
+          else if(connected == null) ...[
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
           ]
         ],
       ),
