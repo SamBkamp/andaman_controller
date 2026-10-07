@@ -2,7 +2,7 @@ import 'doser_page.dart';
 
 enum ScheduleType {
   periodic,
-  daily,
+  continuous,
 }
 
 class Schedule {

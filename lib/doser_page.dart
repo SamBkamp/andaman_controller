@@ -111,6 +111,7 @@ class _DoserPageState extends State<DoserPage> {
       ]
     );
 
+
   }
 
   Widget calibration_dose() {
@@ -150,32 +151,49 @@ class _DoserPageState extends State<DoserPage> {
   }
 
   Widget dose_sched_selector() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          width: 60,
-          child: TextField(
-            controller: dose_controller,
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.numberWithOptions(decimal: true,),
+    if(_schedule_type == ScheduleType.periodic){
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 60,
+            child: TextField(
+              controller: dose_controller,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.numberWithOptions(decimal: true,),
+            ),
           ),
-        ),
 
-        const Text("ml every"),
+          const Text("ml every"),
 
-        SizedBox(
-          width: 100,
-          child: TextField(
-            controller: seconds_controller,
-            textAlign: TextAlign.center,
-            keyboardType: TextInputType.number,
+          SizedBox(
+            width: 100,
+            child: TextField(
+              controller: seconds_controller,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+            ),
           ),
-        ),
 
-        const Text("seconds"),
-      ],
-    );
+          const Text("seconds"),
+        ],
+      );
+    } else{
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 30,
+            child: TextField(
+              controller: insta_dose_amount_controller,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.numberWithOptions(decimal: true,),
+            ),
+          ),
+          const Text("ml/min"),
+        ]
+      );
+    }
   }
 
   Future<void> commit_changes() async {
@@ -193,8 +211,8 @@ class _DoserPageState extends State<DoserPage> {
           child: Text("Periodic"),
         ),
         DropdownMenuItem(
-          value: ScheduleType.daily,
-          child: Text("Evenly throughout day"),
+          value: ScheduleType.continuous,
+          child: Text("Continuous Dosing"),
         ),
       ],
       onChanged: (value) { if (value != null) { setState(() { _schedule_type = value; }); } },
