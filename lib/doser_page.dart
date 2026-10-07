@@ -183,7 +183,7 @@ class _DoserPageState extends State<DoserPage> {
           SizedBox(
             width: 100,
             child: TextField(
-              controller: insta_dose_amount_controller,
+              controller: dose_controller,
               textAlign: TextAlign.center,
               keyboardType: TextInputType.numberWithOptions(decimal: true,),
             ),
