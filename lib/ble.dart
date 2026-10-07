@@ -15,59 +15,80 @@ class Ble_manager {
 
   final results = <DeviceIdentifier, ScanResult>{};
   var devices = <DoserDevice>[];
+  DateTime? last_scan;
+  bool scanning = false;
 
   Ble_manager();
 
   Future<List<DoserDevice>> scan_devices() async {
-    devices.clear();
-    print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
 
-    //weird ass hack where first query returns "unknown"
-    final state = await FlutterBluePlus.adapterState.firstWhere(
-      (state) =>
-      state == BluetoothAdapterState.on ||
-      state == BluetoothAdapterState.off,
-    );
-
-    if(state == BluetoothAdapterState.off) throw Exception("Bluetooth turned off");
-
-    final subscription = FlutterBluePlus.onScanResults.listen(
-      (scan_results) {
-
-        for (final result in scan_results) {
-          results[result.device.remoteId] = result;
-        }
-      },
-      onError: (error) {
-        print("SCAN ERROR: $error");
-      },
-    );
-
-    await FlutterBluePlus.startScan(
-      timeout: const Duration(seconds: 3),
-    );
-
-    await FlutterBluePlus.isScanning
-    .where((state) => state == false)
-    .first;
-
-    await subscription.cancel();
-
-    for (final entry in results.values) {
-      if(entry.advertisementData.advName.length > 1){
-        print("UUID: ${entry.device.remoteId}");
-        print("Name: ${entry.advertisementData.advName}");
-        devices.add(DoserDevice(
-            uuid: entry.device.remoteId.toString(),
-            name: entry.advertisementData.advName,
-          ),
-        );
-      }
-
+    while(scanning){
+      await Future.delayed(const Duration(milliseconds: 100));
     }
-    print(results.length);
 
-    return devices;
+    //keep a scan cache
+    if(last_scan != null
+      && DateTime.now().difference(last_scan!) < const Duration(seconds: 20)){
+      return devices;
+    }
+
+    scanning = true;
+
+    try {
+      devices.clear();
+      print("Bluetooth state: ${await FlutterBluePlus.adapterState.first}");
+
+      //weird ass hack where first query returns "unknown"
+      final state = await FlutterBluePlus.adapterState.firstWhere(
+        (state) =>
+        state == BluetoothAdapterState.on ||
+        state == BluetoothAdapterState.off,
+      );
+
+      if(state == BluetoothAdapterState.off) throw Exception("Bluetooth turned off");
+
+      final subscription = FlutterBluePlus.onScanResults.listen(
+        (scan_results) {
+
+          for (final result in scan_results) {
+            results[result.device.remoteId] = result;
+          }
+        },
+        onError: (error) {
+          print("SCAN ERROR: $error");
+        },
+      );
+
+      await FlutterBluePlus.startScan(
+        timeout: const Duration(seconds: 3),
+      );
+
+      await FlutterBluePlus.isScanning
+      .where((state) => state == false)
+      .first;
+
+      await subscription.cancel();
+
+      for (final entry in results.values) {
+        if(entry.advertisementData.advName.length > 1){
+          print("UUID: ${entry.device.remoteId}");
+          print("Name: ${entry.advertisementData.advName}");
+          devices.add(DoserDevice(
+              uuid: entry.device.remoteId.toString(),
+              name: entry.advertisementData.advName,
+            ),
+          );
+        }
+
+      }
+      print(results.length);
+      last_scan = DateTime.now();
+      return devices;
+
+    } finally {
+      scanning = false;
+    }
+
   }
 
 
@@ -97,6 +118,7 @@ class Ble_manager {
 
     final services = await scan_result.device.discoverServices();
 
+    //enumerating the endpoints into a list for later recall
     for (final service in services) {
       print("Service: ${service.uuid}");
 
@@ -104,37 +126,28 @@ class Ble_manager {
         switch(characteristic.uuid.str){
           case dosing_characteristic_uuid:
           ddev.characteristics[DoserEndpoint.dose.index] = characteristic;
-          print("dosing characteristic:");
           break;
 
           case schedule_characteristic_uuid:
           ddev.characteristics[DoserEndpoint.schedule.index] = characteristic;
-          print("schedule characteristic:");
           break;
 
           case device_info_uuid:
           ddev.characteristics[DoserEndpoint.deviceInfo.index] = characteristic;
-          print("device info characteristic:");
-          final value = await characteristic.read();
-          print("Device info: $value");
           break;
 
           case calibration_uuid:
-          print("calibration characteristic:");
           break;
 
           case write_direction_uuid:
           ddev.characteristics[DoserEndpoint.direction.index] = characteristic;
-          print("dev info characteristic:");
           break;
 
           case auto_cal_uuid:
           ddev.characteristics[DoserEndpoint.autocal.index] = characteristic;
-          print("autocal characteristic:");
           break;
 
           default:
-          print("unknown characteristic:");
           break;
         }
         print("    ${characteristic.uuid}");
@@ -147,7 +160,6 @@ class Ble_manager {
   Future<bool> manual_dose(DoserDevice ddev, String mls) async{
 
     print("manually dosing ${mls} mls");
-    print("in code units: ${mls.codeUnits}");
 
     final characteristic = ddev.characteristics[DoserEndpoint.dose.index];
 

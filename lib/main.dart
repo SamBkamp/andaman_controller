@@ -11,7 +11,7 @@ Future<void> main() async {
   final registry = DeviceRegistry();
   await registry.load();
   final Ble_manager ble = Ble_manager();
-
+  ble.scan_devices(); //inital scan
   runApp(MainApp(registry: registry, ble: ble));
 }
 
@@ -137,8 +137,8 @@ class _MenuWidgetState extends State<MenuWidget> {
   }
 
   ListTile _device_list_item(var context, var index){
-    final device = widget.registry.device_by_index(index); 
-    
+    final device = widget.registry.device_by_index(index);
+
     return ListTile(
       leading: Padding(
         padding: const EdgeInsets.all(8.0),

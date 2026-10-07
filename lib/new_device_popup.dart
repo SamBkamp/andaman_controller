@@ -20,7 +20,6 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
-  DateTime? last_scan;
 
   Future<void> scan_devices() async {
     setState(() {
@@ -92,9 +91,6 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   @override
   void initState() {
     super.initState();
-    if(last_scan == null || DateTime.now().difference(last_scan!) > const Duration(seconds: 10)){
-      scan_devices();
-    }
-    //scanning is false by def
+    scan_devices();
   }
 }
