@@ -279,20 +279,26 @@ class _DoserPageState extends State<DoserPage> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         builder: (context, color, child) {
+          final text_color =
+          save_success ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+
           return keyboard_visible
           ? FloatingActionButton(
             onPressed: commit_changes,
             backgroundColor: color,
-            child: const Icon(Icons.save),
+            child: Icon(Icons.save, color: text_color),
           )
           : FloatingActionButton.extended(
             onPressed: commit_changes,
             backgroundColor: color,
-            label: widget.theme.subtitle_text("Save changes"),
-            icon: const Icon(Icons.save),
+            label: Text(
+              "Save changes",
+              style: TextStyle(color: text_color),
+            ),
+            icon: Icon(Icons.save, color: text_color),
           );
         },
-      )
+      ),
     );
   }
 
