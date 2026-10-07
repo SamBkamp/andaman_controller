@@ -205,7 +205,7 @@ class _DoserPageState extends State<DoserPage> {
   @override
   Widget build(BuildContext context) {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
-    if(!connected){
+    if(connected != null){
       return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
