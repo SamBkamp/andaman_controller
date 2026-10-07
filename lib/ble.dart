@@ -18,6 +18,7 @@ class Ble_manager {
   var devices = <DoserDevice>[];
   DateTime? last_scan;
   bool scanning = false;
+  BluetoothDevice? connected_device;
 
   Ble_manager();
 
@@ -156,6 +157,13 @@ class Ble_manager {
     }
 
     return true;
+  }
+
+  Future<void> disconnect_from_device(DoserDevice ddev) async {
+    if(connected_device == null) return;
+    await connected_device!.disconnect();
+    connected_device = null;
+
   }
 
   Future<bool> manual_dose(DoserDevice ddev, String mls) async{

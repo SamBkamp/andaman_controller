@@ -150,6 +150,7 @@ class _MenuWidgetState extends State<MenuWidget> {
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {
+          widget.ble.disconnect_from_device(device);
           widget.registry.delete(device);
         }
       ),
