@@ -208,9 +208,16 @@ class Ble_manager {
     final val = await characteristic.read();
     String valString = String.fromCharCodes(val);
     print(valString);
-    List<String> parts = valString.split(",");
-    retval.ml = parts[0];
-    retval.period = parts[1];
+
+    if(valString[0] == 'c'){
+      retval.type = ScheduleType.continuous;
+      retval.ml = valString.substring(1); //skip first character
+    }else {
+      List<String> parts = valString.split(",");
+      retval.ml = parts[0];
+      retval.period = parts[1];
+    }
+
     return retval;
   }
 }

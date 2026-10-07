@@ -21,7 +21,6 @@ class DoserPage extends StatefulWidget {
 
 
 class _DoserPageState extends State<DoserPage> {
-  ScheduleType _schedule_type = ScheduleType.periodic;
   Schedule? dose_sched;
   bool? connected;
   bool direction = false;
@@ -51,11 +50,10 @@ class _DoserPageState extends State<DoserPage> {
 
   Future<void> connect_device() async {
     final result = await widget.blemanager.connect_to_device(widget.device);
-
-    if (!mounted || !result) return;
-
     final newDir = await widget.blemanager.getDirection(widget.device);
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
+
+    if (!mounted || !result) return;
 
     setState(() {
         connected = result;
@@ -100,7 +98,7 @@ class _DoserPageState extends State<DoserPage> {
           ),
         ),
         const Text("ml"),
-        SizedBox(width: 20),
+        SizedBox(width: 50),
         FilledButton(
           onPressed: (){
             print(insta_dose_amount_controller.text);
@@ -151,7 +149,7 @@ class _DoserPageState extends State<DoserPage> {
   }
 
   Widget dose_sched_selector() {
-    if(_schedule_type == ScheduleType.periodic){
+    if(dose_sched?.type == ScheduleType.periodic){
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -183,7 +181,7 @@ class _DoserPageState extends State<DoserPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 30,
+            width: 100,
             child: TextField(
               controller: insta_dose_amount_controller,
               textAlign: TextAlign.center,
@@ -204,7 +202,7 @@ class _DoserPageState extends State<DoserPage> {
 
   Widget schedule_type_drop() {
     return DropdownButton<ScheduleType>(
-      value: _schedule_type,
+      value: (dose_sched == null ? ScheduleType.periodic : dose_sched!.type),
       underline: const SizedBox(),
       items: const [ DropdownMenuItem(
           value: ScheduleType.periodic,
@@ -215,7 +213,7 @@ class _DoserPageState extends State<DoserPage> {
           child: Text("Continuous Dosing"),
         ),
       ],
-      onChanged: (value) { if (value != null) { setState(() { _schedule_type = value; }); } },
+      onChanged: (value) { if (value != null) { setState(() { dose_sched?.type = value; }); } },
     );
   }
 
