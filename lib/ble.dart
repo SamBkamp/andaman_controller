@@ -220,7 +220,7 @@ class Ble_manager {
     if(valString[0] == 'c' || valString.substring(valString.length - 6) == "ml/min"){
 
       retval.type = ScheduleType.continuous;
-      retval.ml = valString.substring(1); //skip first character
+      retval.ml = valString.substring(0, 4); //skip first character
     }else {
       List<String> parts = valString.split(",");
       retval.ml = parts[0];
