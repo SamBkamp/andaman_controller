@@ -29,6 +29,7 @@ class _DoserPageState extends State<DoserPage> {
   final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
   final actual_calibration_dose_controller = TextEditingController();
+  bool save_success = false;
 
   @override
   void initState() {
@@ -202,9 +203,20 @@ class _DoserPageState extends State<DoserPage> {
     }
 
     await widget.blemanager.setSchedule(widget.device, dose_sched!);
-    //await widget.ble.commit_changes(widget.device);
 
-    // Whatever you want to do after the device confirms it.
+
+    //flash button green
+    setState(() {
+        save_success = true;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
+    setState(() {
+        save_success = false;
+    });
   }
 
   Widget schedule_type_drop() {
@@ -259,16 +271,28 @@ class _DoserPageState extends State<DoserPage> {
         ],
       ),
 
-      floatingActionButton: keyboard_visible
-      ? FloatingActionButton(
-        onPressed: commit_changes,
-        child: const Icon(Icons.save),
+      floatingActionButton: TweenAnimationBuilder<Color?>(
+        tween: ColorTween(
+          begin: Theme.of(context).colorScheme.primary,
+          end: save_success ? Colors.green : Theme.of(context).colorScheme.primary,
+        ),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        builder: (context, color, child) {
+          return keyboard_visible
+          ? FloatingActionButton(
+            onPressed: commit_changes,
+            backgroundColor: color,
+            child: const Icon(Icons.save),
+          )
+          : FloatingActionButton.extended(
+            onPressed: commit_changes,
+            backgroundColor: color,
+            label: widget.theme.subtitle_text("Save changes"),
+            icon: const Icon(Icons.save),
+          );
+        },
       )
-      : FloatingActionButton.extended(
-        onPressed: commit_changes,
-        label: widget.theme.subtitle_text("Save changes"),
-        icon: const Icon(Icons.save),
-      ),
     );
   }
 
