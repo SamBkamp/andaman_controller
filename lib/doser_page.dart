@@ -36,7 +36,9 @@ class _DoserPageState extends State<DoserPage> {
   @override
   void initState() {
     super.initState();
-    connect_device();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        connect_device();
+    });
   }
 
   @override
