@@ -27,7 +27,7 @@ class _DoserPageState extends State<DoserPage> {
   ScheduleType _schedule_type = ScheduleType.periodic;
   bool? connected;
   bool direction = false;
-  bool TEST_FLAG = true;
+  bool TEST_FLAG = false;
   final dose_controller = TextEditingController();
   final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
