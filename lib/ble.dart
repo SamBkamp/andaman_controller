@@ -217,7 +217,8 @@ class Ble_manager {
     String valString = String.fromCharCodes(val);
     print(valString);
 
-    if(valString[0] == 'c'){
+    if(valString[0] == 'c' || valString.substring(valString.length - 6) == "ml/min"){
+
       retval.type = ScheduleType.continuous;
       retval.ml = valString.substring(1); //skip first character
     }else {
