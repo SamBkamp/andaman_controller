@@ -52,17 +52,18 @@ class _DoserPageState extends State<DoserPage> {
   Future<void> connect_device() async {
     final result = await widget.blemanager.connect_to_device(widget.device);
 
-    setState(() {
-        connected = result;
-    });
+
 
     if (!mounted || !result) return;
 
     final newDir = await widget.blemanager.getDirection(widget.device);
 
-
     setState(() {
         direction = newDir;
+    });
+
+    setState(() {
+        connected = result;
     });
   }
 
@@ -204,6 +205,14 @@ class _DoserPageState extends State<DoserPage> {
   @override
   Widget build(BuildContext context) {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
+    if(!connected){
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
