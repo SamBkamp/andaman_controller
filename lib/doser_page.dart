@@ -56,6 +56,7 @@ class _DoserPageState extends State<DoserPage> {
     if (!mounted || !result) return;
 
     final newDir = await widget.blemanager.getDirection(widget.device);
+    await widget.blemanager.getSchedule(widget.device);
 
     setState(() {
         direction = newDir;
