@@ -41,14 +41,6 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
           child: CircularProgressIndicator(),
         ),
       );
-    }else{ //REMOVE THIS NONSENSE BEFORE SHIPPING
-      if(devices.length == 0){
-        devices.add(DoserDevice(
-            uuid: "123-456-789",
-            name: "DUMMY DEVICE",
-          ),
-        );
-      }
     }
 
 
