@@ -72,12 +72,12 @@ class DeviceRegistry extends ChangeNotifier{
 
   Future<void> delete(DoserDevice device) async {
     devices.remove(device);
-    _update_device_nvs();    
+    _update_device_nvs();
     notifyListeners();
   }
-  
+
   Future<void> add(DoserDevice device) async {
-    devices.add(device);    
+    devices.add(device);
     _update_device_nvs();
     notifyListeners();
   }
@@ -88,6 +88,11 @@ class DeviceRegistry extends ChangeNotifier{
 
   DoserDevice device_by_index(int index) {
     return devices[index];
+  }
+
+  //get devices without loading from nvs
+  List<DoserDevice> devices_noload() {
+    return devices;
   }
 
 }

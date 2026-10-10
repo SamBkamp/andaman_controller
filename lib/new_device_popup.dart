@@ -21,16 +21,37 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
 
+
   Future<void> scan_devices() async {
     setState(() {
         scanning = true;
     });
+
     final scanned_devices = await widget.ble.scan_devices();
+    final stored_devices = widget.registry.devices_noload();
+    //remove devices from dropdown if they've already been saved to nvs
+    final available_devices = scanned_devices.where(
+      (scanned) => !stored_devices.any(
+        (stored) => stored.uuid == scanned.uuid,
+      ),
+    ).toList();
+
     setState(() {
-        devices = scanned_devices;
+        devices = available_devices;
         scanning = false;
     });
   }
+
+//  Future<void> scan_devices() async {
+//    setState(() {
+//        scanning = true;
+//    });
+//    final scanned_devices = await widget.ble.scan_devices();
+//    setState(() {
+//        devices = scanned_devices;
+//        scanning = false;
+//    });
+//  }
 
   Widget newDeviceContent() {
     if(scanning){
@@ -40,6 +61,14 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
           child: CircularProgressIndicator(),
         ),
       );
+    }else{ //REMOVE THIS NONSENSE BEFORE SHIPPING
+      if(devices.length == 0){
+        devices.add(DoserDevice(
+            uuid: "123-456-789",
+            name: "DUMMY DEVICE",
+          ),
+        );
+      }
     }
 
 
