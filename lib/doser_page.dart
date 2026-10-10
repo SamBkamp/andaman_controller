@@ -24,7 +24,7 @@ class _DoserPageState extends State<DoserPage> {
   Schedule? dose_sched;
   bool? connected;
   bool direction = false;
-  bool TEST_FLAG = false;
+  bool TEST_FLAG = true;
   final dose_controller = TextEditingController();
   final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
@@ -302,13 +302,37 @@ class _DoserPageState extends State<DoserPage> {
     );
   }
 
-  Expanded info_col(){
+
+  IconButton edit_name_button() {
+    return IconButton(
+      onPressed: () {
+        // TODO: Open rename dialog
+      },
+      icon: const Icon(Icons.edit_outlined),
+      iconSize: 16,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(
+        minWidth: 32,
+        minHeight: 32,
+      ),
+    );
+  }
+
+  Expanded info_col() {
     return Expanded(
-      flex: 6,
+      flex: 7,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          widget.theme.title_text(widget.device.name),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.theme.title_text(widget.device.name),
+              const SizedBox(width: 2),
+              edit_name_button(),
+            ],
+          ),
           const SizedBox(height: 8),
           widget.theme.small_text(widget.device.uuid),
           const SizedBox(height: 12),
@@ -317,6 +341,7 @@ class _DoserPageState extends State<DoserPage> {
       ),
     );
   }
+
 
   Expanded icon_col(){
     return Expanded(
