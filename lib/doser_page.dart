@@ -29,6 +29,7 @@ class _DoserPageState extends State<DoserPage> {
   final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
   final actual_calibration_dose_controller = TextEditingController();
+  final rename_device_controller = TextEditingController();
   bool save_success = false;
 
   @override
@@ -45,11 +46,13 @@ class _DoserPageState extends State<DoserPage> {
     seconds_controller.dispose();
     insta_dose_amount_controller.dispose();
     actual_calibration_dose_controller.dispose();
+    rename_device_controller.dispose();
     super.dispose();
   }
 
 
   Future<void> connect_device() async {
+    rename_device_controller.text = widget.device.name;
     final result = await widget.blemanager.connect_to_device(widget.device);
     final newDir = await widget.blemanager.getDirection(widget.device);
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
@@ -241,7 +244,6 @@ class _DoserPageState extends State<DoserPage> {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
 
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
@@ -302,12 +304,49 @@ class _DoserPageState extends State<DoserPage> {
     );
   }
 
+  Future<void> save_name(BuildContext dialog_context) async {
+    if (dialog_context.mounted) {
+      Navigator.pop(dialog_context, rename_device_controller.text.trim());
+    }
+
+  }
+
+
+  Future<void> rename_device(BuildContext context) async {
+
+    final new_name = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialog_context) => AlertDialog(
+        title: const Text('Rename device'),
+        content: TextField(
+          controller: rename_device_controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            hintText: 'Device name',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialog_context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            //TODO: make the onpressed also commit it to BLE
+            onPressed: () => save_name(dialog_context),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   IconButton edit_name_button() {
     return IconButton(
-      onPressed: () {
-        // TODO: Open rename dialog
-      },
+      onPressed: () => rename_device(context),
       icon: const Icon(Icons.edit_outlined),
       iconSize: 16,
       visualDensity: VisualDensity.compact,
