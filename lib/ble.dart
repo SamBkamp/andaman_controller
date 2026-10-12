@@ -149,6 +149,10 @@ class Ble_manager {
           ddev.characteristics[DoserEndpoint.autocal.index] = characteristic;
           break;
 
+          case devname_uuid:
+          ddev.characteristics[DoserEndpoint.devname.index] = characteristic;
+          break;
+
           default:
           break;
         }
@@ -217,10 +221,10 @@ class Ble_manager {
     String valString = String.fromCharCodes(val);
     print(valString);
 
-    if(valString[0] == 'c' || valString.substring(valString.length - 6) == "ml/min"){
+    if(valString[0] == 'c'){
 
       retval.type = ScheduleType.continuous;
-      retval.ml = valString.substring(0, 4); //skip first character
+      retval.ml = valString.substring(1); //skip first character
     }else {
       List<String> parts = valString.split(",");
       retval.ml = parts[0];
@@ -261,5 +265,17 @@ class Ble_manager {
 
     return true;
 
+  }
+
+  Future<bool> setNewName(DoserDevice ddev, String name) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.devname.index];
+
+    if (characteristic == null) {
+      return false;
+    }
+
+    await characteristic.write(name.codeUnits);
+
+    return true;
   }
 }

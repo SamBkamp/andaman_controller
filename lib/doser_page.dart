@@ -308,7 +308,7 @@ class _DoserPageState extends State<DoserPage> {
     if (dialog_context.mounted) {
       Navigator.pop(dialog_context, rename_device_controller.text.trim());
     }
-
+    widget.blemanager.setNewName(widget.device, rename_device_controller.text);
   }
 
 

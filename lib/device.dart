@@ -9,7 +9,8 @@ enum DoserEndpoint {
   dose,
   schedule,
   autocal,
-  direction
+  direction,
+  devname
 }
 
 
