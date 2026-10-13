@@ -13,10 +13,10 @@ class DoserPage extends StatefulWidget {
   final Theme_data theme = const Theme_data();
 
   const DoserPage({
-    super.key,
-    required this.device,
-    required this.blemanager,
-    required this.registry,
+      super.key,
+      required this.device,
+      required this.blemanager,
+      required this.registry,
   });
 
   @override
@@ -35,7 +35,8 @@ class _DoserPageState extends State<DoserPage> {
   final actual_calibration_dose_controller = TextEditingController();
   final rename_device_controller = TextEditingController();
   bool save_success = false;
-  StreamSubscription<BluetoothConnectionState>? _connection_sub;
+  StreamSubscription<bool>? connection_sub;
+
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _DoserPageState extends State<DoserPage> {
     insta_dose_amount_controller.dispose();
     actual_calibration_dose_controller.dispose();
     rename_device_controller.dispose();
-    _connection_sub?.cancel();
+    connection_sub?.cancel();
     super.dispose();
   }
 
@@ -63,18 +64,21 @@ class _DoserPageState extends State<DoserPage> {
     final newDir = await widget.blemanager.getDirection(widget.device);
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
 
-    if (!mounted || !result) return;
+    print("CONNECTION STATUS: $result");
 
-    BluetoothDevice? ble_device = widget.blemanager.getBleDevice();
-    if(ble_device != null){
-      _connection_sub = ble_device!.connectionState.listen((state) {
-          if (!mounted) return;
-
-          setState(() {
-              connected = state == BluetoothConnectionState.connected;
-          });
-      });
+    if (!mounted) return;
+    if(!result){
+      setState((){connected = result;});
+      return;
     }
+
+    connection_sub = widget.blemanager.connection_state.listen((connected_stat) {
+        if (!mounted) return;
+
+        setState(() {
+            connected = connected_stat;
+        });
+    });
 
     setState(() {
         connected = result;

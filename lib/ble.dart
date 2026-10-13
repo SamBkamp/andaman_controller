@@ -1,6 +1,7 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'device.dart';
 import 'schedule.dart';
+import 'dart:async';
 
 class Ble_manager {
 
@@ -19,6 +20,9 @@ class Ble_manager {
   DateTime? last_scan;
   bool scanning = false;
   BluetoothDevice? connected_device;
+  final _connection_state_controller = StreamController<bool>.broadcast();
+  Stream<bool> get connection_state =>_connection_state_controller.stream;
+  StreamSubscription<BluetoothConnectionState>? _connection_sub;
 
   Ble_manager();
 
@@ -123,6 +127,8 @@ class Ble_manager {
       print("Connection failed: $e");
       return false;
     }
+
+    connected_device = scan_result.device;
 
     final services = await scan_result.device.discoverServices();
 
@@ -287,5 +293,25 @@ class Ble_manager {
 
   BluetoothDevice? getBleDevice() {
     return connected_device;
+  }
+
+  void listen_to_device() {
+    _connection_sub?.cancel();
+    final device = connected_device;
+
+    if (device == null) {
+      _connection_state_controller.add(false);
+      return;
+    }
+
+
+    _connection_sub = device.connectionState.listen((state) {
+        _connection_state_controller.add(state == BluetoothConnectionState.connected);
+    });
+  }
+
+  Future<void> dispose() async {
+    await _connection_sub?.cancel();
+    await _connection_state_controller.close();
   }
 }
