@@ -262,6 +262,24 @@ class _DoserPageState extends State<DoserPage> {
     );
   }
 
+  Widget save_settings() {
+    Color button_color = save_success ? Colors.green : Theme.of(context).colorScheme.primary;
+    Color text_color = save_success ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+    return FilledButton(
+      style: FilledButton.styleFrom(backgroundColor: button_color),
+      onPressed: commit_changes,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children:[
+          Icon(Icons.save, color: text_color),
+          SizedBox(width: 10),
+          Text( "Save changes", style: TextStyle(color: text_color),),
+        ],
+      ),
+    );
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final keyboard_visible = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -282,6 +300,7 @@ class _DoserPageState extends State<DoserPage> {
             setting_row("Direction", Switch(value: direction, onChanged: (value)=>direction_changed(value)), 3, 7),
             setting_row("Schedule", schedule_type_drop(), 3, 7, bottom_padding: 0),
             setting_row(null, dose_sched_selector(), 1, 9, top_padding: 0),
+            setting_row(null, save_settings(), 1, 9, top_padding: 0),
             section_header("Tools"),
             setting_row("Manual Dosing", manual_dosing(), 5, 5),
             setting_row("Calibration", calibration_dose(), 4, 6, bottom_padding: 0),
@@ -361,7 +380,7 @@ class _DoserPageState extends State<DoserPage> {
             //TODO: make the onpressed also commit it to BLE
             onPressed: () => save_name(dialog_context),
             child: const Text('Save'),
-          ),
+           ),
         ],
       ),
     );
