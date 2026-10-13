@@ -237,7 +237,7 @@ class _DoserPageState extends State<DoserPage> {
         save_success = true;
     });
 
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 250));
 
     setState(() {
         save_success = false;
@@ -315,34 +315,34 @@ class _DoserPageState extends State<DoserPage> {
         ],
       ),
 
-      floatingActionButton: TweenAnimationBuilder<Color?>(
-        tween: ColorTween(
-          begin: Theme.of(context).colorScheme.primary,
-          end: save_success ? Colors.green : Theme.of(context).colorScheme.primary,
-        ),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        builder: (context, color, child) {
-          final text_color =
-          save_success ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+//      floatingActionButton: TweenAnimationBuilder<Color?>(
+//        tween: ColorTween(
+//          begin: Theme.of(context).colorScheme.primary,
+//          end: save_success ? Colors.green : Theme.of(context).colorScheme.primary,
+//        ),
+//        duration: const Duration(milliseconds: 300),
+//        curve: Curves.easeInOut,
+//        builder: (context, color, child) {
+//          final text_color =
+//          save_success ? Colors.white : Theme.of(context).colorScheme.onPrimary;
+//
+//          return keyboard_visible
+//          ? FloatingActionButton(
+//            onPressed: commit_changes,
+//            backgroundColor: color,
+//            child: Icon(Icons.save, color: text_color),
+//          )
+//          : FloatingActionButton.extended(
+//            onPressed: commit_changes,
+//            backgroundColor: color,
+//            label: Text(
+//              "Save changes",
+//              style: TextStyle(color: text_color),
+//            ),
+//            icon: Icon(Icons.save, color: text_color),
+//          );
+//        },
 
-          return keyboard_visible
-          ? FloatingActionButton(
-            onPressed: commit_changes,
-            backgroundColor: color,
-            child: Icon(Icons.save, color: text_color),
-          )
-          : FloatingActionButton.extended(
-            onPressed: commit_changes,
-            backgroundColor: color,
-            label: Text(
-              "Save changes",
-              style: TextStyle(color: text_color),
-            ),
-            icon: Icon(Icons.save, color: text_color),
-          );
-        },
-      ),
     );
   }
 
