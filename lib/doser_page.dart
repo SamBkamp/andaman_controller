@@ -43,17 +43,6 @@ class _DoserPageState extends State<DoserPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
         connect_device();
     });
-
-    BluetoothDevice? ble_device = widget.blemanager.getBleDevice();
-    if(ble_device != null){
-      _connection_sub = ble_device!.connectionState.listen((state) {
-          if (!mounted) return;
-
-          setState(() {
-              connected = state == BluetoothConnectionState.connected;
-          });
-      });
-    }
   }
 
   @override
@@ -75,6 +64,17 @@ class _DoserPageState extends State<DoserPage> {
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
 
     if (!mounted || !result) return;
+
+    BluetoothDevice? ble_device = widget.blemanager.getBleDevice();
+    if(ble_device != null){
+      _connection_sub = ble_device!.connectionState.listen((state) {
+          if (!mounted) return;
+
+          setState(() {
+              connected = state == BluetoothConnectionState.connected;
+          });
+      });
+    }
 
     setState(() {
         connected = result;
