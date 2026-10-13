@@ -73,6 +73,7 @@ class _DoserPageState extends State<DoserPage> {
     }
 
     connection_sub = widget.blemanager.connection_state.listen((connected_stat) {
+        print("FIRED");
         if (!mounted) return;
 
         setState(() {
