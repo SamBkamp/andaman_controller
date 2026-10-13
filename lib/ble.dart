@@ -101,7 +101,12 @@ class Ble_manager {
   Future<bool> connect_to_device(DoserDevice ddev) async{
 
     final uuid = DeviceIdentifier(ddev.uuid);
-    final scan_result = results[uuid];
+    var scan_result = results[uuid];
+
+    //return early if we are already connected
+    if(connected_device != null && connected_device!.remoteId.toString() == ddev.uuid){
+      return true;
+    }
 
     if (scan_result == null) {
       print("Connection failed: scan_result was NULL");
