@@ -146,12 +146,8 @@ class _MenuWidgetState extends State<MenuWidget> {
         child: Image.asset('assets/doser_clipaart.png'),
       ),
       title: Text(device.name,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
-      subtitle: FittedBox(
-        fit: BoxFit.scaleDown,
-        alignment: Alignment.centerLeft,
-        child: Text(device.uuid),
-      ),
+        style: const TextStyle(fontWeight: FontWeight.w600),),
+      subtitle:Text(device.uuid),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {
