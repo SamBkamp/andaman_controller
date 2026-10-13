@@ -378,10 +378,13 @@ class _DoserPageState extends State<DoserPage> {
             ],
           ),
           const SizedBox(height: 8),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: widget.theme.small_text(widget.device.uuid),
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: widget.theme.small_text(widget.device.uuid),
+            ),
           ),
           const SizedBox(height: 12),
           connection_status(),
