@@ -64,7 +64,7 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
     }else{ //REMOVE THIS NONSENSE BEFORE SHIPPING
       if(devices.length == 0){
         devices.add(DoserDevice(
-            uuid: "123-456-789",
+            uuid: "8b7668b1-2fa9-40ac-5208-1aa51d1ee896",
             name: "DUMMY DEVICE",
           ),
         );
