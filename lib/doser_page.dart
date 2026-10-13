@@ -3,6 +3,8 @@ import 'device.dart';
 import 'ble.dart';
 import 'theme_data.dart';
 import 'schedule.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'dart:async';
 
 class DoserPage extends StatefulWidget {
   final DoserDevice device;
@@ -33,6 +35,7 @@ class _DoserPageState extends State<DoserPage> {
   final actual_calibration_dose_controller = TextEditingController();
   final rename_device_controller = TextEditingController();
   bool save_success = false;
+  StreamSubscription<BluetoothConnectionState>? _connection_sub;
 
   @override
   void initState() {
@@ -40,6 +43,17 @@ class _DoserPageState extends State<DoserPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
         connect_device();
     });
+
+    BluetoothDevice? ble_device = widget.blemanager.getBleDevice();
+    if(ble_device != null){
+      _connection_sub = ble_device!.connectionState.listen((state) {
+          if (!mounted) return;
+
+          setState(() {
+              connected = state == BluetoothConnectionState.connected;
+          });
+      });
+    }
   }
 
   @override
@@ -49,6 +63,7 @@ class _DoserPageState extends State<DoserPage> {
     insta_dose_amount_controller.dispose();
     actual_calibration_dose_controller.dispose();
     rename_device_controller.dispose();
+    _connection_sub?.cancel();
     super.dispose();
   }
 

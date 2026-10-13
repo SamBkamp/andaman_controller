@@ -111,6 +111,12 @@ class Ble_manager {
       return false;
     }
 
+    //only connect to one device at a time
+    if(connected_device != null){
+      await connected_device!.disconnect();
+      connected_device = null;
+    }
+
     try {
       await scan_result.device.connect();
     } catch (e) {
@@ -277,5 +283,9 @@ class Ble_manager {
     await characteristic.write(name.codeUnits);
 
     return true;
+  }
+
+  BluetoothDevice? getBleDevice() {
+    return connected_device;
   }
 }
