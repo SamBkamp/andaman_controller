@@ -130,7 +130,8 @@ class _MenuWidgetState extends State<MenuWidget> {
       MaterialPageRoute(
         builder: (context) => DoserPage(
           device: device,
-          blemanager: widget.ble
+          blemanager: widget.ble,
+          registry: widget.registry
         ),
       ),
     );

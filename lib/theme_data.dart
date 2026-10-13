@@ -4,11 +4,12 @@ class Theme_data {
 
   const Theme_data();
 
-  Widget small_text_bold(String text){
+  Widget small_text_bold(String text, {Color? colour}){
     return Text(
       text,
       style: TextStyle(
         fontWeight: FontWeight.w600,
+        color: colour
       ),
     );
   }

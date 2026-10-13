@@ -15,8 +15,8 @@ enum DoserEndpoint {
 
 
 class DoserDevice {
-  final String name;
-  final String uuid;
+  String name;
+  String uuid;
   List<BluetoothCharacteristic?> characteristics = List.filled(DoserEndpoint.values.length, null);
 
   DoserDevice({
@@ -36,6 +36,10 @@ class DoserDevice {
       name: json['name'],
       uuid: json['uuid'],
     );
+  }
+
+  void setName(String newName){
+    this.name = newName;
   }
 }
 
@@ -94,6 +98,15 @@ class DeviceRegistry extends ChangeNotifier{
   //get devices without loading from nvs
   List<DoserDevice> devices_noload() {
     return devices;
+  }
+
+  Future<void> update_name(DoserDevice device, String name) async{
+    final ddev_idx = devices.indexOf(device);
+    if(ddev_idx >= 0){
+      devices[ddev_idx].name = name;
+      _update_device_nvs();
+    }
+
   }
 
 }

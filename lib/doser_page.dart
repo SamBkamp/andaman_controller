@@ -7,12 +7,14 @@ import 'schedule.dart';
 class DoserPage extends StatefulWidget {
   final DoserDevice device;
   final Ble_manager blemanager;
+  final DeviceRegistry registry;
   final Theme_data theme = const Theme_data();
 
   const DoserPage({
     super.key,
     required this.device,
     required this.blemanager,
+    required this.registry,
   });
 
   @override
@@ -71,13 +73,15 @@ class _DoserPageState extends State<DoserPage> {
 
   Widget connection_status() {
     String text = "Disconnected";
+    Color colour =  Theme.of(context).colorScheme.error;
     if (connected == null) {
       text = "Connecting...";
+      colour = Color.fromRGBO(0xFD, 0xCA, 0x40, 1.0);
     } else if (connected!) {
       text = "Connected";
+      colour = Color.fromRGBO(0xDA, 0xFF, 0x7D, 1.0);
     }
-
-    return widget.theme.small_text_bold(text);
+    return widget.theme.small_text_bold(text, colour: colour);
   }
 
 
@@ -215,11 +219,10 @@ class _DoserPageState extends State<DoserPage> {
 
     await Future.delayed(const Duration(milliseconds: 500));
 
-    if (!mounted) return;
-
     setState(() {
         save_success = false;
     });
+    if (!mounted) return;
   }
 
   Widget schedule_type_drop() {
@@ -235,7 +238,7 @@ class _DoserPageState extends State<DoserPage> {
           child: Text("Continuous Dosing"),
         ),
       ],
-      onChanged: (value) { if (value != null) { setState(() { dose_sched?.type = value; }); } },
+      onChanged: (value) { if (value != null) { setState(() { dose_sched!.type = value; }); } },
     );
   }
 
@@ -309,6 +312,8 @@ class _DoserPageState extends State<DoserPage> {
       Navigator.pop(dialog_context, rename_device_controller.text.trim());
     }
     widget.blemanager.setNewName(widget.device, rename_device_controller.text);
+    widget.registry.update_name(widget.device, rename_device_controller.text);
+    //widget.device.name = rename_device_controller.text;
   }
 
 
@@ -462,20 +467,4 @@ class _DoserPageState extends State<DoserPage> {
       ),
     );
   }
-
-//  Widget setting_row(String name, Widget setting, int width1, int width2){
-//    return Padding(
-//      padding: const EdgeInsets.symmetric( horizontal: 10, vertical: 14,),
-//      child: Row(
-//        children: [
-//          Expanded( flex: width1, child: widget.theme.subtitle_text(name),),
-//          Expanded(
-//            flex: width2,
-//            child: Align( alignment: Alignment.centerRight, child: setting,),
-//          ),
-//        ],
-//      ),
-//    );
-//  }
-//
 }
