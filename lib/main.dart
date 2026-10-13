@@ -147,7 +147,11 @@ class _MenuWidgetState extends State<MenuWidget> {
       ),
       title: Text(device.name,
         style: const TextStyle(fontWeight: FontWeight.w600),),
-      subtitle: Text(device.uuid),
+      subtitle: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(device.uuid),
+      ),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {
