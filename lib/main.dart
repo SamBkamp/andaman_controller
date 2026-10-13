@@ -141,13 +141,10 @@ class _MenuWidgetState extends State<MenuWidget> {
     final device = widget.registry.device_by_index(index);
 
     return ListTile(
-      leading: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Image.asset('assets/doser_clipaart.png'),
-      ),
+      leading: Image.asset('assets/doser_clipaart.png'),      
       title: Text(device.name,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),),
-      subtitle:Text(device.uuid),
+      subtitle: Text(device.uuid, style: TextStyle(fontSize: 13)),
       trailing: IconButton(
         icon: Icon(Icons.delete),
         onPressed: () {
@@ -166,7 +163,10 @@ class _MenuWidgetState extends State<MenuWidget> {
         slivers: [
           menu_bar(),
           SliverList.builder(
-            itemBuilder: (context, index) => _device_list_item(context, index),
+            itemBuilder: (context, index) => Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0),
+              child: _device_list_item(context, index)
+            ),
             itemCount: widget.registry.total_devices(),
           ),
         ],
