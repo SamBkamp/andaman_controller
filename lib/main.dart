@@ -142,11 +142,11 @@ class _MenuWidgetState extends State<MenuWidget> {
 
     return ListTile(
       leading: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Image.asset('assets/doser_clipaart.png'),
       ),
       title: Text(device.name,
-        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
       subtitle: FittedBox(
         fit: BoxFit.scaleDown,
         alignment: Alignment.centerLeft,
