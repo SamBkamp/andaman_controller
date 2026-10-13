@@ -304,9 +304,8 @@ class Ble_manager {
       _connection_state_controller.add(false);
       return;
     }
-
-
     _connection_sub = device.connectionState.listen((state) {
+        if(state == BluetoothConnectionState.disconnected) connected_device = null;
         _connection_state_controller.add(state == BluetoothConnectionState.connected);
     });
   }
