@@ -122,10 +122,10 @@ class _MenuWidgetState extends State<MenuWidget> {
   }
 
 
-  void _device_tap(int index){
+  void _device_tap(int index) async{
     final device = widget.registry.device_by_index(index);
 
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => DoserPage(
