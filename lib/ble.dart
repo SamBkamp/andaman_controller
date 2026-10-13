@@ -129,6 +129,7 @@ class Ble_manager {
     }
 
     connected_device = scan_result.device;
+    listen_to_device();
 
     final services = await scan_result.device.discoverServices();
 
