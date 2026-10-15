@@ -34,6 +34,9 @@ class _DoserPageState extends State<DoserPage> {
   final insta_dose_amount_controller = TextEditingController();
   final actual_calibration_dose_controller = TextEditingController();
   final rename_device_controller = TextEditingController();
+  int selected_hours = 0;
+  int selected_minutes = 0;
+  int selected_seconds = 10;
   bool save_success = false;
   StreamSubscription<bool>? connection_sub;
 
@@ -44,6 +47,9 @@ class _DoserPageState extends State<DoserPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
         connect_device();
     });
+    if(TEST_FLAG){
+      dose_sched = Schedule(ScheduleType.periodic, "0", period: "10");
+    }
   }
 
   @override
@@ -63,6 +69,7 @@ class _DoserPageState extends State<DoserPage> {
     final result = await widget.blemanager.connect_to_device(widget.device);
     final newDir = await widget.blemanager.getDirection(widget.device);
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
+    int? period_seconds = int.tryParse(sched.period);
 
     print("CONNECTION STATUS: $result");
 
@@ -73,7 +80,6 @@ class _DoserPageState extends State<DoserPage> {
     }
 
     connection_sub = widget.blemanager.connection_state.listen((connected_stat) {
-        print("FIRED");
         if (!mounted) return;
 
         setState(() {
@@ -87,6 +93,11 @@ class _DoserPageState extends State<DoserPage> {
         dose_sched = sched;
         dose_controller.text = sched.ml;
         seconds_controller.text = sched.period;
+        if(period_seconds != null){
+          selected_hours = period_seconds ~/ 3600;
+          selected_minutes = (period_seconds % 3600) ~/ 60;
+          selected_seconds = period_seconds % 60;
+      }
     });
   }
 
@@ -175,6 +186,37 @@ class _DoserPageState extends State<DoserPage> {
     );
   }
 
+  Widget time_picker_column({
+      required int value,
+      required int max_value,
+      required ValueChanged<int> on_changed,
+  }) {
+    return SizedBox(
+      height: 120,
+      width: 65,
+      child: ListWheelScrollView.useDelegate(
+        itemExtent: 40,
+        physics: const FixedExtentScrollPhysics(),
+        controller: FixedExtentScrollController(
+          initialItem: value,
+        ),
+        onSelectedItemChanged: on_changed,
+        childDelegate: ListWheelChildBuilderDelegate(
+          childCount: max_value + 1,
+          builder: (context, index) {
+            return Center(
+              child: Text(
+                index.toString().padLeft(2, '0'),
+                style: const TextStyle(fontSize: 20),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+
   Widget dose_sched_selector() {
     if(dose_sched?.type == ScheduleType.periodic){
       return Row(
@@ -191,16 +233,45 @@ class _DoserPageState extends State<DoserPage> {
 
           const Text("ml every"),
 
-          SizedBox(
-            width: 100,
-            child: TextField(
-              controller: seconds_controller,
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.number,
-            ),
-          ),
 
-          const Text("seconds"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              time_picker_column(
+                value: selected_hours,
+                max_value: 99,
+                on_changed: (value) {
+                  setState(() => selected_hours = value);
+                },
+              ),
+              const Text(":"),
+              time_picker_column(
+                value: selected_minutes,
+                max_value: 59,
+                on_changed: (value) {
+                  setState(() => selected_minutes = value);
+                },
+              ),
+              const Text(":"),
+              time_picker_column(
+                value: selected_seconds,
+                max_value: 59,
+                on_changed: (value) {
+                  setState(() => selected_seconds = value);
+                },
+              ),
+            ],
+          )
+//          SizedBox(
+//            width: 100,
+//            child: TextField(
+//              controller: seconds_controller,
+//              textAlign: TextAlign.center,
+//              keyboardType: TextInputType.number,
+//            ),
+//          ),
+
+//          const Text("seconds"),
         ],
       );
     } else{
@@ -226,8 +297,11 @@ class _DoserPageState extends State<DoserPage> {
 
     dose_sched!.ml = dose_controller.text;
     if(dose_sched!.type == ScheduleType.periodic){
-      dose_sched!.period = seconds_controller.text;
+      dose_sched!.period = (selected_hours*3600 + selected_minutes * 60 + selected_seconds).toString();
+      String help = dose_sched!.period;
+      print("calculated period: $help");
     }
+
 
     await widget.blemanager.setSchedule(widget.device, dose_sched!);
 
@@ -259,6 +333,7 @@ class _DoserPageState extends State<DoserPage> {
         ),
       ],
       onChanged: (value) { if (value != null) { setState(() { dose_sched!.type = value; }); } },
+      //onChanged: (value) {  setState(() { dose_sched!.type = value; }); },
     );
   }
 
@@ -314,35 +389,6 @@ class _DoserPageState extends State<DoserPage> {
           ]
         ],
       ),
-
-//      floatingActionButton: TweenAnimationBuilder<Color?>(
-//        tween: ColorTween(
-//          begin: Theme.of(context).colorScheme.primary,
-//          end: save_success ? Colors.green : Theme.of(context).colorScheme.primary,
-//        ),
-//        duration: const Duration(milliseconds: 300),
-//        curve: Curves.easeInOut,
-//        builder: (context, color, child) {
-//          final text_color =
-//          save_success ? Colors.white : Theme.of(context).colorScheme.onPrimary;
-//
-//          return keyboard_visible
-//          ? FloatingActionButton(
-//            onPressed: commit_changes,
-//            backgroundColor: color,
-//            child: Icon(Icons.save, color: text_color),
-//          )
-//          : FloatingActionButton.extended(
-//            onPressed: commit_changes,
-//            backgroundColor: color,
-//            label: Text(
-//              "Save changes",
-//              style: TextStyle(color: text_color),
-//            ),
-//            icon: Icon(Icons.save, color: text_color),
-//          );
-//        },
-
     );
   }
 
