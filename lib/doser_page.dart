@@ -5,6 +5,7 @@ import 'theme_data.dart';
 import 'schedule.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
+import 'TimedSchedulePage.dart';
 
 class DoserPage extends StatefulWidget {
   final DoserDevice device;
@@ -25,7 +26,7 @@ class DoserPage extends StatefulWidget {
 
 
 class _DoserPageState extends State<DoserPage> {
-  Schedule? dose_sched;
+  Schedule dose_sched = Schedule(ScheduleType.periodic, "0", period: "10");
   bool? connected;
   bool direction = false;
   bool TEST_FLAG = true;
@@ -47,9 +48,6 @@ class _DoserPageState extends State<DoserPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
         connect_device();
     });
-    if(TEST_FLAG){
-      dose_sched = Schedule(ScheduleType.periodic, "0", period: "10");
-    }
   }
 
   @override
@@ -268,7 +266,15 @@ class _DoserPageState extends State<DoserPage> {
     } else{
       return TextButton(
         onPressed: () {
-          // TODO: Open the timed schedule editor
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TimedSchedulePage(device: widget.device,
+                theme: widget.theme,
+                sched: dose_sched,
+              ),
+            ),
+          );
         },
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(
@@ -446,7 +452,14 @@ class _DoserPageState extends State<DoserPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              widget.theme.title_text(widget.device.name),
+              Flexible(
+                fit: FlexFit.loose,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: widget.theme.title_text(widget.device.name),
+                ),
+              ),
               const SizedBox(width: 2),
               edit_name_button(),
             ],
