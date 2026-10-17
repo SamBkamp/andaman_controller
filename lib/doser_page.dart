@@ -263,32 +263,20 @@ class _DoserPageState extends State<DoserPage> {
               ),
             ],
           )
-//          SizedBox(
-//            width: 100,
-//            child: TextField(
-//              controller: seconds_controller,
-//              textAlign: TextAlign.center,
-//              keyboardType: TextInputType.number,
-//            ),
-//          ),
-
-//          const Text("seconds"),
         ],
       );
     } else{
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 100,
-            child: TextField(
-              controller: dose_controller,
-              textAlign: TextAlign.center,
-              keyboardType: TextInputType.numberWithOptions(decimal: true,),
-            ),
+      return TextButton(
+        onPressed: () {
+          // TODO: Open the timed schedule editor
+        },
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
           ),
-          const Text("ml/min"),
-        ]
+        ),
+        child: const Text("Edit schedule →"),
       );
     }
   }
@@ -330,7 +318,7 @@ class _DoserPageState extends State<DoserPage> {
         ),
         DropdownMenuItem(
           value: ScheduleType.continuous,
-          child: Text("Continuous Dosing"),
+          child: Text("Timed"),
         ),
       ],
       onChanged: (value) { if (value != null) { setState(() { dose_sched!.type = value; }); } },
