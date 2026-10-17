@@ -2,6 +2,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'device.dart';
 import 'schedule.dart';
 import 'dart:async';
+import 'dart:typed_data';
 
 class Ble_manager {
 
@@ -296,6 +297,29 @@ class Ble_manager {
 
     return true;
   }
+
+  Future<bool> setSysTime(DoserDevice ddev) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.deviceInfo.index];
+
+    if (characteristic == null) {
+      return false;
+    }
+
+
+    int timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    Uint8List bytes = (ByteData(8)..setInt64(
+        0,
+        timestamp,
+        Endian.little,
+    )).buffer.asUint8List();
+
+    await characteristic.write(bytes);
+
+    return true;
+
+  }
+
 
   BluetoothDevice? getBleDevice() {
     return connected_device;

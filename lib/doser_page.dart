@@ -69,6 +69,7 @@ class _DoserPageState extends State<DoserPage> {
     final result = await widget.blemanager.connect_to_device(widget.device);
     final newDir = await widget.blemanager.getDirection(widget.device);
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
+    await widget.blemanager.setSysTime(widget.device);
     int? period_seconds = int.tryParse(sched.period);
 
     print("CONNECTION STATUS: $result");
@@ -97,7 +98,7 @@ class _DoserPageState extends State<DoserPage> {
           selected_hours = period_seconds ~/ 3600;
           selected_minutes = (period_seconds % 3600) ~/ 60;
           selected_seconds = period_seconds % 60;
-      }
+        }
     });
   }
 
