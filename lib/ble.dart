@@ -265,7 +265,7 @@ class Ble_manager {
     val = await characteristic.read();
 
     for (int i = 0; i < val.length; i += 4) {
-      int amount_raw = val[i + 2] | (val[i + 3] << 8);
+      int amount_raw = (val[i + 2]>>8) | val[i + 3];
 
       retval.entries.add(TimedScheduleEntry(
           hours: val[i],
