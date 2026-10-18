@@ -10,7 +10,8 @@ enum DoserEndpoint {
   schedule,
   autocal,
   direction,
-  devname
+  devname,
+  timedsched,
 }
 
 

@@ -14,6 +14,7 @@ class Ble_manager {
   static const write_direction_uuid         = "8b7668b1-2fa9-4ed1-5208-1aa51d1ee896";
   static const devname_uuid                 = "8b7668b1-2fa9-9e4a-5208-1aa51d1ee896";
   static const auto_cal_uuid                = "8b7668b1-2fa9-5110-5208-1aa51d1ee896";
+  static const timed_sched_uuid             = "8b7668b1-2fa9-ed71-5208-1aa51d1ee896";
 
 
   final results = <DeviceIdentifier, ScanResult>{};
@@ -172,6 +173,9 @@ class Ble_manager {
           ddev.characteristics[DoserEndpoint.devname.index] = characteristic;
           break;
 
+          case timed_sched_uuid:
+          ddev.characteristics[DoserEndpoint.timedsched.index] = characteristic;
+
           default:
           break;
         }
@@ -254,8 +258,9 @@ class Ble_manager {
   }
 
   Future<bool> setSchedule(DoserDevice ddev, Schedule sched) async {
-    final characteristic = ddev.characteristics[DoserEndpoint.schedule.index];
+    final characteristic = sched.type == ScheduleType.timed ? ddev.characteristics[DoserEndpoint.timedsched.index] : ddev.characteristics[DoserEndpoint.schedule.index];
     String sendVal = "";
+
     if (characteristic == null) {
       return false;
     }
@@ -267,8 +272,7 @@ class Ble_manager {
         int hours = sched.entries[i].hours;
         int mins = sched.entries[i].minutes;
         double amount = sched.entries[i].amount;
-        print("${hours.toString().padLeft(2, '0')}:"
-          "${mins.toString().padLeft(2, '0')},$amount");
+        sendVal += "${hours.toString().padLeft(2, '0')}:${mins.toString().padLeft(2, '0')},$amount|";
       }
 
     }else{
@@ -276,6 +280,8 @@ class Ble_manager {
       String period = sched.period;
       sendVal = "$mls,$period";
     }
+
+    print(sendVal);
 
     await characteristic.write(sendVal.codeUnits);
 
