@@ -323,7 +323,7 @@ class _DoserPageState extends State<DoserPage> {
           child: Text("Periodic"),
         ),
         DropdownMenuItem(
-          value: ScheduleType.continuous,
+          value: ScheduleType.timed,
           child: Text("Timed"),
         ),
       ],
