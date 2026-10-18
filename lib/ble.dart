@@ -259,6 +259,7 @@ class Ble_manager {
 
   Future<bool> setSchedule(DoserDevice ddev, Schedule sched) async {
     final characteristic = sched.type == ScheduleType.timed ? ddev.characteristics[DoserEndpoint.timedsched.index] : ddev.characteristics[DoserEndpoint.schedule.index];
+    List<int> data = [];
     String sendVal = "";
 
     if (characteristic == null) {
@@ -267,23 +268,29 @@ class Ble_manager {
     if(sched.type == ScheduleType.continuous){
       String mls = sched.ml;
       sendVal = "c$mls";
+      data = sendVal.codeUnits;
     }else if(sched.type == ScheduleType.timed){
       for(int i = 0; i < sched.entries.length; i ++){
-        int hours = sched.entries[i].hours;
-        int mins = sched.entries[i].minutes;
-        double amount = sched.entries[i].amount;
-        sendVal += "${hours.toString().padLeft(2, '0')}:${mins.toString().padLeft(2, '0')},$amount|";
+        data.add(sched.entries[i].hours);
+        data.add(sched.entries[i].minutes);
+
+        int amount = (sched.entries[i].amount *100).round();
+        // uint16 little-endian
+        data.add(amount & 0xFF);
+        data.add((amount >> 8) & 0xFF);
+
       }
 
     }else{
       String mls = sched.ml;
       String period = sched.period;
       sendVal = "$mls,$period";
+      data = sendVal.codeUnits;
     }
 
     print(sendVal);
 
-    await characteristic.write(sendVal.codeUnits);
+    await characteristic.write(data);
 
     return true;
   }
