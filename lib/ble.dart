@@ -235,12 +235,14 @@ class Ble_manager {
 
   Future<Schedule> getSchedule(DoserDevice ddev) async {
     Schedule retval = Schedule(ScheduleType.periodic, "2.5");
-    final characteristic = ddev.characteristics[DoserEndpoint.schedule.index];
+
+    //get periodic schedule
+    var characteristic = ddev.characteristics[DoserEndpoint.schedule.index];
     if (characteristic == null) {
       return retval;
     }
 
-    final val = await characteristic.read();
+    List<int> val = await characteristic.read();
     String valString = String.fromCharCodes(val);
     print(valString);
 
@@ -252,6 +254,24 @@ class Ble_manager {
       List<String> parts = valString.split(",");
       retval.ml = parts[0];
       retval.period = parts[1];
+    }
+
+    //get timed schedule
+
+    characteristic = ddev.characteristics[DoserEndpoint.timedsched.index];
+    if (characteristic == null) {
+      return retval;
+    }
+    val = await characteristic.read();
+
+    for (int i = 0; i < val.length; i += 4) {
+      int amount_raw = val[i + 2] | (val[i + 3] << 8);
+
+      retval.entries.add(TimedScheduleEntry(
+          hours: val[i],
+          minutes: val[i + 1],
+          amount: amount_raw / 100.0,
+      ));
     }
 
     return retval;
