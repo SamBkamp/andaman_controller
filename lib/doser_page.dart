@@ -86,6 +86,8 @@ class _DoserPageState extends State<DoserPage> {
         });
     });
 
+    print("entries: ${sched.entries.length}");
+
     setState(() {
         connected = result;
         direction = newDir;
