@@ -248,16 +248,12 @@ class Ble_manager {
 
     if(valString[0] == 't'){ //if the result starts with T, the active dose type is timed.
       retval.type = ScheduleType.timed;
-      retval.ml = valString.substring(1); //skip first character
-      List<String> parts = valString.split(",");
-      retval.ml = parts[0];
-      retval.period = parts[1];
-    }else {
-      List<String> parts = valString.split(",");
-      retval.ml = parts[0];
-      retval.period = parts[1];
-
+      valString = valString.substring(1); //skip first character
     }
+
+    List<String> parts = valString.split(",");
+    retval.ml = parts[0];
+    retval.period = parts[1];
 
     //get timed schedule
 
