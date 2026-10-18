@@ -267,7 +267,8 @@ class Ble_manager {
         int hours = sched.entries[i].hours;
         int mins = sched.entries[i].minutes;
         double amount = sched.entries[i].amount;
-        print("$hours:$mins,$amount");
+        print("${hours.toString().padLeft(2, '0')}:"
+          "${mins.toString().padLeft(2, '0')},$amount");
       }
 
     }else{
