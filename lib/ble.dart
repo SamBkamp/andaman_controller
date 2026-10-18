@@ -262,6 +262,14 @@ class Ble_manager {
     if(sched.type == ScheduleType.continuous){
       String mls = sched.ml;
       sendVal = "c$mls";
+    }else if(sched.type == ScheduleType.timed){
+      for(int i = 0; i < sched.entries.length; i ++){
+        int hours = sched.entries[i].hours;
+        int mins = sched.entries[i].minutes;
+        double amount = sched.entries[i].amount;
+        print("$hours:$mins,$amount");
+      }
+
     }else{
       String mls = sched.ml;
       String period = sched.period;
