@@ -31,13 +31,16 @@ class _DoserPageState extends State<DoserPage> {
   bool direction = false;
   bool TEST_FLAG = true;
   final dose_controller = TextEditingController();
-  final seconds_controller = TextEditingController();
+//  final seconds_controller = TextEditingController();
   final insta_dose_amount_controller = TextEditingController();
   final actual_calibration_dose_controller = TextEditingController();
   final rename_device_controller = TextEditingController();
   int selected_hours = 0;
   int selected_minutes = 0;
-  int selected_seconds = 10;
+  int selected_seconds = 0;
+  late FixedExtentScrollController hours_controller;
+  late FixedExtentScrollController minutes_controller;
+  late FixedExtentScrollController seconds_controller;
   bool save_success = false;
   StreamSubscription<bool>? connection_sub;
 
@@ -45,6 +48,11 @@ class _DoserPageState extends State<DoserPage> {
   @override
   void initState() {
     super.initState();
+
+    hours_controller = FixedExtentScrollController(initialItem: 0);
+    minutes_controller = FixedExtentScrollController(initialItem: 0);
+    seconds_controller = FixedExtentScrollController(initialItem: 0);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
         connect_device();
     });
@@ -53,6 +61,8 @@ class _DoserPageState extends State<DoserPage> {
   @override
   void dispose() {
     dose_controller.dispose();
+    hours_controller.dispose();
+    minutes_controller.dispose();
     seconds_controller.dispose();
     insta_dose_amount_controller.dispose();
     actual_calibration_dose_controller.dispose();
@@ -86,23 +96,26 @@ class _DoserPageState extends State<DoserPage> {
         });
     });
 
-    print("entries: ${sched.entries.length}");
-
     setState(() {
         connected = result;
         direction = newDir;
         dose_sched = sched;
         dose_controller.text = sched.ml;
-        seconds_controller.text = sched.period;
+        //seconds_controller.text = sched.period;
         if(period_seconds != null){
           selected_hours = period_seconds ~/ 3600;
           selected_minutes = (period_seconds % 3600) ~/ 60;
           selected_seconds = period_seconds % 60;
-          print("$selected_hours : $selected_minutes : $selected_seconds");
-        }else{
-          print("could not parse period");
         }
     });
+    if (period_seconds != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          hours_controller.jumpToItem(selected_hours);
+          minutes_controller.jumpToItem(selected_minutes);
+          seconds_controller.jumpToItem(selected_seconds);
+      });
+
   }
 
 
@@ -193,6 +206,7 @@ class _DoserPageState extends State<DoserPage> {
   Widget time_picker_column({
       required int value,
       required int max_value,
+      required FixedExtentScrollController controller,
       required ValueChanged<int> on_changed,
   }) {
     return SizedBox(
@@ -201,9 +215,7 @@ class _DoserPageState extends State<DoserPage> {
       child: ListWheelScrollView.useDelegate(
         itemExtent: 40,
         physics: const FixedExtentScrollPhysics(),
-        controller: FixedExtentScrollController(
-          initialItem: value,
-        ),
+        controller: controller,
         onSelectedItemChanged: on_changed,
         childDelegate: ListWheelChildBuilderDelegate(
           childCount: max_value + 1,
@@ -223,7 +235,7 @@ class _DoserPageState extends State<DoserPage> {
 
   Widget dose_sched_selector() {
     print("INSIDE DOSE_SCHED_SEL: $selected_hours : $selected_minutes : $selected_seconds");
-    print("type: ${ScheduleType.periodic}");
+    print("type: ${ScheduleType}");
     if(dose_sched?.type == ScheduleType.periodic){
       return Row(
         mainAxisSize: MainAxisSize.min,
@@ -246,6 +258,7 @@ class _DoserPageState extends State<DoserPage> {
               time_picker_column(
                 value: selected_hours,
                 max_value: 99,
+                controller: hours_controller,
                 on_changed: (value) {
                   setState(() => selected_hours = value);
                   print("Hi");
@@ -255,6 +268,7 @@ class _DoserPageState extends State<DoserPage> {
               time_picker_column(
                 value: selected_minutes,
                 max_value: 59,
+                controller: minutes_controller,
                 on_changed: (value) {
                   setState(() => selected_minutes = value);
                 },
@@ -263,6 +277,7 @@ class _DoserPageState extends State<DoserPage> {
               time_picker_column(
                 value: selected_seconds,
                 max_value: 59,
+                controller: seconds_controller,
                 on_changed: (value) {
                   setState(() => selected_seconds = value);
                 },
