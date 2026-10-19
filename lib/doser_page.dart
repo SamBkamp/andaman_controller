@@ -247,6 +247,7 @@ class _DoserPageState extends State<DoserPage> {
                 max_value: 99,
                 on_changed: (value) {
                   setState(() => selected_hours = value);
+                  print("Hi");
                 },
               ),
               const Text(":"),
