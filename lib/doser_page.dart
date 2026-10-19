@@ -98,6 +98,8 @@ class _DoserPageState extends State<DoserPage> {
           selected_hours = period_seconds ~/ 3600;
           selected_minutes = (period_seconds % 3600) ~/ 60;
           selected_seconds = period_seconds % 60;
+        }else{
+          print("could not parse period");
         }
     });
   }

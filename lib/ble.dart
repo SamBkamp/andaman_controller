@@ -246,7 +246,7 @@ class Ble_manager {
     String valString = String.fromCharCodes(val);
     print(valString);
 
-    if(valString[0] == 't'){ //if the result starts with T, the active dose type is timed.
+    if(valString[0] == 't'){ //if the result starts with t, the active dose type is timed.
       retval.type = ScheduleType.timed;
       valString = valString.substring(1); //skip first character
     }
@@ -254,6 +254,7 @@ class Ble_manager {
     List<String> parts = valString.split(",");
     retval.ml = parts[0];
     retval.period = parts[1];
+    print(retval.period);
 
     //get timed schedule
 
