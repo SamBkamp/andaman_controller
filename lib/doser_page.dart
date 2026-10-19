@@ -222,6 +222,7 @@ class _DoserPageState extends State<DoserPage> {
 
 
   Widget dose_sched_selector() {
+    print("INSIDE DOSE_SCHED_SEL: $selected_hours : $selected_minutes : $selected_seconds");
     if(dose_sched?.type == ScheduleType.periodic){
       return Row(
         mainAxisSize: MainAxisSize.min,
