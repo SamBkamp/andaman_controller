@@ -115,6 +115,7 @@ class _DoserPageState extends State<DoserPage> {
           minutes_controller.jumpToItem(selected_minutes);
           seconds_controller.jumpToItem(selected_seconds);
       });
+    }
 
   }
 
