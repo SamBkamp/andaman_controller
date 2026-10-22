@@ -108,7 +108,7 @@ class Ble_manager {
 
     try {
       // Load the precompiled application image.
-      final data = await rootBundle.load('assets/firmware/doser.bin');
+      final data = await rootBundle.load('assets/andaman_firmware.bin');
       final firmware = data.buffer.asUint8List(
         data.offsetInBytes,
         data.lengthInBytes,
