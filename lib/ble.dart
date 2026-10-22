@@ -126,7 +126,7 @@ class Ble_manager {
 
       // START: command + image size (uint32 little-endian).
       final start = ByteData(5)
-      ..setUint8(0, 0x01)
+      ..setUint8(0, 0x00)
       ..setUint32(1, firmware.length, Endian.little);
 
       await characteristic.write(
@@ -143,7 +143,7 @@ class Ble_manager {
         final packet = Uint8List(5 + count);
         final header = ByteData.sublistView(packet);
 
-        header.setUint8(0, 0x02);
+        header.setUint8(0, 0x01);
         header.setUint32(1, offset, Endian.little);
         packet.setRange(5, 5 + count, firmware, offset);
 
@@ -157,7 +157,7 @@ class Ble_manager {
 
       // FINISH.
       await characteristic.write(
-        Uint8List.fromList([0x03]),
+        Uint8List.fromList([0x02]),
         withoutResponse: false,
       );
 
