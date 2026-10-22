@@ -103,6 +103,7 @@ class Ble_manager {
 
 
   Future<bool> send_ota_update(DoserDevice ddev) async {
+    print("we updating");
     final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
     if(characteristic == null) return false;
 
