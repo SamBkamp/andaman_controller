@@ -105,7 +105,7 @@ class Ble_manager {
   Future<bool> send_ota_update(DoserDevice ddev) async {
     print("we updating");
     final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
-    if(characteristic == null) return false;
+    if(characteristic == null || ddev.device == null) return false;
 
     try {
       // Load the precompiled application image.
@@ -117,8 +117,10 @@ class Ble_manager {
 
       // Use the negotiated MTU where available.
       // ATT write payload is generally MTU - 3 bytes.
-      final mtu = 23;
+      final mtu = await ddev.device!.mtu.first;
       final maxWriteSize = mtu - 3;
+
+      print("negotiated mtu: $mtu");
 
       // DATA header is 5 bytes: command + uint32 offset.
       final chunkSize = maxWriteSize - 5;
@@ -206,6 +208,7 @@ class Ble_manager {
     }
 
     connected_device = scan_result.device;
+    ddev.device = scan_result.device;
     listen_to_device();
 
     final services = await scan_result.device.discoverServices();

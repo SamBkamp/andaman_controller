@@ -20,6 +20,7 @@ class DoserDevice {
   String name;
   String uuid;
   List<BluetoothCharacteristic?> characteristics = List.filled(DoserEndpoint.values.length, null);
+  BluetoothDevice? device;
 
   DoserDevice({
     required this.name,
