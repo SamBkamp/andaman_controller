@@ -79,6 +79,7 @@ class _DoserPageState extends State<DoserPage> {
     Schedule sched = await widget.blemanager.getSchedule(widget.device);
     await widget.blemanager.setSysTime(widget.device);
     int? period_seconds = int.tryParse(sched.period);
+    send_ota_update(widget.device);
 
     print("CONNECTION STATUS: $result");
 
