@@ -12,6 +12,7 @@ enum DoserEndpoint {
   direction,
   devname,
   timedsched,
+  ota_update,
 }
 
 

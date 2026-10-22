@@ -3,6 +3,8 @@ import 'device.dart';
 import 'schedule.dart';
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Ble_manager {
 
@@ -15,7 +17,7 @@ class Ble_manager {
   static const devname_uuid                 = "8b7668b1-2fa9-9e4a-5208-1aa51d1ee896";
   static const auto_cal_uuid                = "8b7668b1-2fa9-5110-5208-1aa51d1ee896";
   static const timed_sched_uuid             = "8b7668b1-2fa9-ed71-5208-1aa51d1ee896";
-
+  static const ota_update_uuid              = "8b7668b1-2fa9-a501-5208-1aa51d1ee896";
 
   final results = <DeviceIdentifier, ScanResult>{};
   var devices = <DoserDevice>[];
@@ -100,6 +102,73 @@ class Ble_manager {
   }
 
 
+  Future<bool> send_ota_update(DoserDevice ddev) async {
+    final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
+    if(characteristic == null) return false;
+
+    try {
+      // Load the precompiled application image.
+      final data = await rootBundle.load('assets/firmware/doser.bin');
+      final firmware = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+
+      // Use the negotiated MTU where available.
+      // ATT write payload is generally MTU - 3 bytes.
+      final mtu = 23;
+      final maxWriteSize = mtu - 3;
+
+      // DATA header is 5 bytes: command + uint32 offset.
+      final chunkSize = maxWriteSize - 5;
+      if (chunkSize <= 0) return false;
+
+      // START: command + image size (uint32 little-endian).
+      final start = ByteData(5)
+      ..setUint8(0, 0x01)
+      ..setUint32(1, firmware.length, Endian.little);
+
+      await characteristic.write(
+        start.buffer.asUint8List(),
+        withoutResponse: false,
+      );
+
+      // DATA: command + offset + payload.
+      for (var offset = 0; offset < firmware.length;) {
+        final count = (firmware.length - offset < chunkSize)
+        ? firmware.length - offset
+        : chunkSize;
+
+        final packet = Uint8List(5 + count);
+        final header = ByteData.sublistView(packet);
+
+        header.setUint8(0, 0x02);
+        header.setUint32(1, offset, Endian.little);
+        packet.setRange(5, 5 + count, firmware, offset);
+
+        await characteristic.write(
+          packet,
+          withoutResponse: false,
+        );
+
+        offset += count;
+      }
+
+      // FINISH.
+      await characteristic.write(
+        Uint8List.fromList([0x03]),
+        withoutResponse: false,
+      );
+
+      return true;
+    } catch (e) {
+      print('OTA update failed: $e');
+      return false;
+    }
+
+  }
+
+
   Future<bool> connect_to_device(DoserDevice ddev) async{
 
     final uuid = DeviceIdentifier(ddev.uuid);
@@ -175,6 +244,9 @@ class Ble_manager {
 
           case timed_sched_uuid:
           ddev.characteristics[DoserEndpoint.timedsched.index] = characteristic;
+
+          case ota_update_uuid:
+          ddev.characteristics[DoserEndpoint.ota_update.index] = characteristic;
 
           default:
           break;
