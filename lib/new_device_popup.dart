@@ -58,6 +58,8 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
 //  }
 
 Widget newDeviceContent() {
+  print("demo mode is: $demoMode");
+
   if(demoMode){
     devices.add(DoserDevice(
         uuid: "8b7668b1-2fa9-40ac-5208-1aa51d1ee896",
