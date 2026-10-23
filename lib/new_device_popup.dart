@@ -20,7 +20,7 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
-  const bool demoMode = bool.fromEnvironment(
+  final bool demoMode = bool.fromEnvironment(
     'DEMO_MODE',
     defaultValue: false,
   );
@@ -63,7 +63,7 @@ Widget newDeviceContent() {
         uuid: "8b7668b1-2fa9-40ac-5208-1aa51d1ee896",
         name: "ADN-Doser",
       ),
-    )
+    );
   }
 
   if(scanning && !demoMode){
