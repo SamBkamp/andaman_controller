@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'device.dart';
 import 'ble.dart';
 
+const bool demoMode = bool.fromEnvironment(
+    'DEMO_MODE',
+    defaultValue: false,
+  );
+
 class NewDevicePopup extends StatefulWidget {
   final DeviceRegistry registry;
   final Ble_manager ble;
@@ -20,10 +25,7 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
-  final bool demoMode = bool.fromEnvironment(
-    'DEMO_MODE',
-    defaultValue: false,
-  );
+
 
 
   Future<void> scan_devices() async {
