@@ -20,6 +20,10 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
   bool scanning = false;
   List<DoserDevice> devices = [];
   DoserDevice? selectedDevice;
+  const bool demoMode = bool.fromEnvironment(
+    'DEMO_MODE',
+    defaultValue: false,
+  );
 
 
   Future<void> scan_devices() async {
@@ -53,42 +57,41 @@ class _NewDevicePopupState extends State<NewDevicePopup> {
 //    });
 //  }
 
-  Widget newDeviceContent() {
-    if(scanning){
-      return const SizedBox(
-        height: 48,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }else{ //REMOVE THIS NONSENSE BEFORE SHIPPING
-      if(devices.length == 0){
-        devices.add(DoserDevice(
-            uuid: "8b7668b1-2fa9-40ac-5208-1aa51d1ee896",
-            name: "DUMMY DEVICE",
-          ),
-        );
-      }
-    }
+Widget newDeviceContent() {
+  if(demoMode){
+    devices.add(DoserDevice(
+        uuid: "8b7668b1-2fa9-40ac-5208-1aa51d1ee896",
+        name: "ADN-Doser",
+      ),
+    )
+  }
 
-
-    return DropdownButton<DoserDevice>(
-      hint: const Text("Select a device"),
-      value: selectedDevice,
-      isExpanded: true,
-      items: devices.map((device) {
-          return DropdownMenuItem<DoserDevice>(
-            value: device,
-            child: Text(device.name),
-          );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-            selectedDevice = value;
-        });
-      },
+  if(scanning && !demoMode){
+    return const SizedBox(
+      height: 48,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
+
+  return DropdownButton<DoserDevice>(
+    hint: const Text("Select a device"),
+    value: selectedDevice,
+    isExpanded: true,
+    items: devices.map((device) {
+        return DropdownMenuItem<DoserDevice>(
+          value: device,
+          child: Text(device.name),
+        );
+    }).toList(),
+    onChanged: (value) {
+      setState(() {
+          selectedDevice = value;
+      });
+    },
+  );
+}
 
 
   @override
