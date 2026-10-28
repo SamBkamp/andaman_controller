@@ -13,6 +13,7 @@ enum DoserEndpoint {
   devname,
   timedsched,
   ota_update,
+  tz_update,
 }
 
 

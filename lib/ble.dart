@@ -103,6 +103,16 @@ class Ble_manager {
   }
 
 
+  Future<bool> update_tz(DoserDevice ddev) async {
+    String tz = "UTC-6";
+    final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
+    if(characteristic == null) return false;
+
+    await characteristic.write(tz.codeUnits);
+    return true;
+
+  }
+
   Future<bool> send_ota_update(DoserDevice ddev, String image) async {
     print("we updating");
     final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
@@ -252,6 +262,9 @@ class Ble_manager {
 
           case ota_update_uuid:
           ddev.characteristics[DoserEndpoint.ota_update.index] = characteristic;
+
+          case timezone_uuid:
+          ddev.characteristics[DoserEndpoint.tz_update.index] = characteristic;
 
           default:
           break;
@@ -413,7 +426,6 @@ class Ble_manager {
     }
 
     await characteristic.write(name.codeUnits);
-
     return true;
   }
 
