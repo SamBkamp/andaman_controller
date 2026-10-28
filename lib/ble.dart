@@ -104,8 +104,10 @@ class Ble_manager {
 
 
   Future<bool> update_tz(DoserDevice ddev) async {
-    print(DateTime.now().timeZoneOffset.toString());
-    String tz = "UTC-6";
+    //it gets reversed bc POSIX setenv takes the inverse...
+    // for weird historical reasons.....
+    final offset = -DateTime.now().timeZoneOffset.inHours;
+    final tz = 'UTC$offset';
     final characteristic = ddev.characteristics[DoserEndpoint.tz_update.index];
     if(characteristic == null) return false;
 
