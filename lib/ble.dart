@@ -105,7 +105,7 @@ class Ble_manager {
 
   Future<bool> update_tz(DoserDevice ddev) async {
     String tz = "UTC-6";
-    final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
+    final characteristic = ddev.characteristics[DoserEndpoint.tz_update.index];
     if(characteristic == null) return false;
 
     await characteristic.write(tz.codeUnits);
