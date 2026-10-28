@@ -104,6 +104,7 @@ class Ble_manager {
 
 
   Future<bool> update_tz(DoserDevice ddev) async {
+    DateTime dateTime = DateTime.now();
     String tz = "UTC-6";
     final characteristic = ddev.characteristics[DoserEndpoint.tz_update.index];
     if(characteristic == null) return false;
@@ -114,7 +115,7 @@ class Ble_manager {
   }
 
   Future<bool> send_ota_update(DoserDevice ddev, String image) async {
-    print("we updating");
+    print(DateTime.now().timeZoneOffset.toString());
     final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
     if(characteristic == null || ddev.device == null) return false;
 
