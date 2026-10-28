@@ -18,6 +18,7 @@ class Ble_manager {
   static const auto_cal_uuid                = "8b7668b1-2fa9-5110-5208-1aa51d1ee896";
   static const timed_sched_uuid             = "8b7668b1-2fa9-ed71-5208-1aa51d1ee896";
   static const ota_update_uuid              = "8b7668b1-2fa9-a501-5208-1aa51d1ee896";
+  static const timezone_uuid                = "8b7668b1-2fa9-5371-5208-1aa51d1ee896";
 
   final results = <DeviceIdentifier, ScanResult>{};
   var devices = <DoserDevice>[];
@@ -102,14 +103,14 @@ class Ble_manager {
   }
 
 
-  Future<bool> send_ota_update(DoserDevice ddev) async {
+  Future<bool> send_ota_update(DoserDevice ddev, String image) async {
     print("we updating");
     final characteristic = ddev.characteristics[DoserEndpoint.ota_update.index];
     if(characteristic == null || ddev.device == null) return false;
 
     try {
       // Load the precompiled application image.
-      final data = await rootBundle.load('assets/andaman_firmware.bin');
+      final data = await rootBundle.load(image);
       final firmware = data.buffer.asUint8List(
         data.offsetInBytes,
         data.lengthInBytes,
